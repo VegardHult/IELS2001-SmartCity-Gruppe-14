@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <Arduino.h>
 #include <Zumo32U4.h>
 #include "startSequence.h"
@@ -21,3 +22,6 @@ void trackLinePosition(){
 void stopOnLine(){
     
 }
+=======
+#include "startSequence.h"
+>>>>>>> b9627aa3799316da0ab73bbb65c34ad9533d46b2
