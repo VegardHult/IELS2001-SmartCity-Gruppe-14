@@ -1,5 +1,6 @@
 #include "utility.h"
 
+// Read encoder values
 intPair readEncoders() {
     
     intPair readClicks{};

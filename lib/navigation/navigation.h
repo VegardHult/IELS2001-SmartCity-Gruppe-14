@@ -8,6 +8,7 @@
 
 extern Zumo32U4Motors motors;
 
+// Drive certain amount of clicks per motor
 void driveClicks(int cL, int cR, int speed);
 
 void makeTurn(int degrees, int speed);

@@ -25,6 +25,7 @@ struct intPair {
     int int2;
 };
 
+// Read encoder values
 intPair readEncoders();
 
 #endif // UTILITY_H

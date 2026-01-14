@@ -11,7 +11,7 @@ int defaultTurnSpeed = 50;
 int emergencySpeed = 200;
 int emergencyTurnSpeed = emergencySpeed / defaultSpeed * defaultTurnSpeed;
 
-
+// Drive certain amount of clicks per motor
 void driveClicks(int cL, int cR, int speed) {
     intPair readClicks{};
     intPair countClicks{};
@@ -104,17 +104,19 @@ void navigateGrid (nextAction a) {
     // Turn 180 degrees
     case T:
         /* code */
+        makeTurn(180, turnSpeed);
         break;
 
     // Turn left
     case L:
         /* code */
-        // 
+        makeTurn(-90, turnSpeed);
         break;
         
     // Turn right
     case R:
         /* code */
+        makeTurn(90, turnSpeed);
         break;    
     }
 

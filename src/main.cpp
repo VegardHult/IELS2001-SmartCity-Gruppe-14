@@ -9,6 +9,7 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
+// Setup ZUMO modules
 Zumo32U4Encoders encoders;
 Zumo32U4Motors motors;
 
