@@ -7,4 +7,6 @@
 
 void gyroskopInit();
 
-int getVinkel()
+void oppdaterGyro();
+
+int getDirection();

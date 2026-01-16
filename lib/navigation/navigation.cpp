@@ -18,9 +18,9 @@ bool busy = false;
 intPair countClicks{};
 
 // 
-static int degreesTurnAround = 180;
-static int degreesLeftTurn = -90;
-static int degreesRightTurn = 90;
+static int degreesTurnAround = 174;
+static int degreesLeftTurn = -84;
+static int degreesRightTurn = 84;
 
 // Navigation master function
 void navigateGrid (actions nextAction) {
@@ -55,36 +55,36 @@ void navigateGrid (actions nextAction) {
     // Drive straight to intersection
     case D:
         /*code*/
-        if (!followLine()) {actionFinished = false;}
-        else {actionFinished = true; action = nextAction;}
+        if (!followLine()) {busy = true;}
+        else {busy = false; action = nextAction;}
         break;
     // Drive straight on intersection
     case S:
         /* code */
         // Drive past intersection
-        if (!driveClicks(clicksToIntersection, clicksToIntersection, speed)) {actionFinished = true;}
-        else {actionFinished = false; action = nextAction;}
+        if (!driveClicks(clicksToIntersection, clicksToIntersection, speed)) {busy = true;}
+        else {busy = false; action = nextAction;}
         break;
 
     // Turn 180 degrees
     case T:
         /* code */
-        if (!makeTurn(degreesTurnAround, speed)) {actionFinished = true;}
-        else {actionFinished = false; action = nextAction;}
+        if (!makeTurn(degreesTurnAround, turnSpeed)) {busy = true;}
+        else {busy = false; action = nextAction;}
         break;
 
     // Turn left
     case L:
         /* code */
-        if (!makeTurn(degreesLeftTurn, speed)) {actionFinished = true;}
-        else {actionFinished = false; action = nextAction;}
+        if (!makeTurn(degreesLeftTurn, turnSpeed)) {busy = true;}
+        else {busy = false; action = nextAction;}
         break;
         
     // Turn right
     case R:
         /* code */
-        if (!makeTurn(degreesRightTurn, speed)) {actionFinished = true;} 
-        else {actionFinished = false; action = nextAction;}
+        if (!makeTurn(degreesRightTurn, turnSpeed)) {busy = true;}
+        else {busy = false; action = nextAction;}
         break;
     
     // Idle
@@ -98,7 +98,7 @@ void navigateGrid (actions nextAction) {
 
 // Follow line between intersections
 bool followLine() {
-    
+    return true;
 }
 
 // Drive certain amount of clicks per motor
@@ -135,6 +135,7 @@ bool driveClicks(int cL, int cR, int speed) {
         // Check if click count is over target click count
         if (countClicks.int1 >= cL && countClicks.int2 >= cR) {
             // Return true if done driving
+            busy = false;
             return true;
         }
     }
@@ -153,8 +154,8 @@ bool makeTurn(int degrees, int speed) {
         // Set motor direction
         int dirL;
         int dirR;
-        if (degrees > 0) {dirL = 1; dirR = -1;}
-        else if (degrees < 0) {dirL = -1; dirR = 1;} 
+        if (degrees > 0) {dirL = -1; dirR = 1;}
+        else if (degrees < 0) {dirL = 1; dirR = -1;} 
         else {dirL = 1; dirR = 1;}
 
         // Start motors
@@ -163,10 +164,21 @@ bool makeTurn(int degrees, int speed) {
     } 
     // Run while turning, return true when done turning
     else {
-        int currentDirection = getDirection() - startDirection;
-        if (abs(currentDirection) >= abs(degrees)) {
-            return true;
+        int currentDirection = (getDirection() - startDirection);
+        if (currentDirection > 180) {currentDirection -= 360;} else if (currentDirection < -179) {currentDirection += 360;}
+        Serial.println(currentDirection);
+        if (degrees >= 0) {
+            if (currentDirection >= degrees) {
+                busy = false;
+                return true;
+            }
+        } else {
+            if (currentDirection <= degrees) {
+                busy = false;
+                return true;
+            }
         }
+        
     }
     // Return false if not done turning
     return false;

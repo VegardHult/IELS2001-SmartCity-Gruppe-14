@@ -16,13 +16,24 @@ Zumo32U4Motors motors;
 modes mode = PATROL;
 actions action = I;
 
+bool wait = false;
+
 void setup() {
   // put your setup code here, to run once:
+  gyroskopInit();
+  delay(2000);
 }
 
 void loop() {
+
+  oppdaterGyro();
   // put your main code here, to run repeatedly:
-  makeTurn(90, 50);
-  motors.setSpeeds(0, 0);
-  delay(1000);
+  int degreesLeftTurn = 84;
+  int speed = 200;
+
+  if (makeTurn(degreesLeftTurn, speed)) {
+    motors.setSpeeds(0, 0);
+    delay(1000);
+  }
+
 }

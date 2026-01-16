@@ -4,9 +4,6 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
-extern Zumo32U4Encoders encoders;
-extern actions action = D;
-
 enum actions {
     D, // Drive, line following
     S, // Straight
@@ -20,6 +17,9 @@ enum modes {
     PATROL,
     EMERGENCY
 };
+
+extern Zumo32U4Encoders encoders;
+extern actions action;
 
 extern modes mode;
 
