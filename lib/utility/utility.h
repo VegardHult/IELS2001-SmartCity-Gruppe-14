@@ -5,12 +5,15 @@
 #include <Zumo32U4.h>
 
 extern Zumo32U4Encoders encoders;
+extern actions action = D;
 
-enum nextAction {
+enum actions {
+    D, // Drive, line following
     S, // Straight
     T, // Turn 180 degrees
     L, // Turn left
-    R  // Turn right
+    R,  // Turn right
+    I
 };
 
 enum modes {

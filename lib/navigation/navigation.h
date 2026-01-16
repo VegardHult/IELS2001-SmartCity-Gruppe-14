@@ -8,11 +8,16 @@
 
 extern Zumo32U4Motors motors;
 
+// Navigation master function
+void navigateGrid(actions nextAction);
+
+// Follow line between intersections
+bool followLine();
+
 // Drive certain amount of clicks per motor
-void driveClicks(int cL, int cR, int speed);
+bool driveClicks(int cL, int cR, int speed);
 
-void makeTurn(int degrees, int speed);
-
-void navigateGrid(nextAction a);
+// Turn certain amount of degrees on the spot
+bool makeTurn(int degrees, int speed);
 
 #endif // NAVIGATION_H
