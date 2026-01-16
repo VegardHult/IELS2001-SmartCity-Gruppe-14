@@ -1,3 +1,4 @@
+#include <Zumo32U4.h>
 #include <Arduino.h>
 #include "battery.h"
 #include "display.h"
