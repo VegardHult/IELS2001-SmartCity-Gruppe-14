@@ -8,21 +8,10 @@
 #include "startSequence.h"
 #include "utility.h"
 
-Zumo32U4Buzzer buzzer;
+
 
 void setup() {
-  Serial.begin(9600);
-  initSensors();
-
-
-  spinZumo();
- 
-
-  buzzer.playNote(NOTE_A(4), 500, 10);
-  
 }
 
 void loop() {
-
- 
 }
