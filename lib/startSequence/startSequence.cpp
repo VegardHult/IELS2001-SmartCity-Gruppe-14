@@ -2,12 +2,7 @@
 #include <Zumo32U4.h>
 #include "startSequence.h"
 
-/*extren*/ Zumo32U4LineSensors lineSensors;
-/*extren*/ Zumo32U4Motors motors;
-
 unsigned int lineSensorValues[5];
-unsigned long elapsedTime = 0;
-unsigned long timeWhenCrossedLine = 0;
 
 // skru på sensorer
 void initSensors()
@@ -15,44 +10,29 @@ void initSensors()
     lineSensors.initFiveSensors();
 }
 
-void trackLinePosition()
-{
-    lineSensors.readLine(lineSensorValues);
-    /*for(int i=0;i<5;i++){
-         Serial.print(lineSensorValues[i]);
-    }
-    Serial.println("-------------");*/
-
-    if (lineSensorValues[2] = 1000)
-    {
-        timeWhenCrossedLine = elapsedTime;
-    }
-}
-
+//spinner bilen helt til den finne linja igjen
 void stopOnLine()
-
 {
-    int startTimeFindLine = elapsedTime;
-    while ((elapsedTime - startTimeFindLine) < timeWhenCrossedLine)
+    while (lineSensorValues[2] != 1000)
     {
+        lineSensors.readLine(lineSensorValues);
         motors.setSpeeds(-200, 200);
+        delay(10);
     }
+
     motors.setSpeeds(0,0);
 }
 
-//noe feil med logikken i tiden på denne
-void spinZumo()
+//spinner bilen og kalibrerer sensorene
+void calibrateZumo()
 {
-    elapsedTime = millis();
     for (int i = 0; i < 40; i++)
     {
-
-        motors.setSpeeds(200, -200);
-
         lineSensors.calibrate();
-        trackLinePosition();
+        motors.setSpeeds(200, -200);
         delay(10);
     }
-    
+    motors.setSpeeds(0,0);
+    //kalibrering ferdig -> spin tilbake til linja
     stopOnLine();
 }
