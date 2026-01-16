@@ -3,3 +3,8 @@
 // Your declarations here
 
 #endif // LOCATE_H
+
+
+void gyroskopInit();
+
+int getVinkel()
