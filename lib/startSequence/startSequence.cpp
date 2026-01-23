@@ -2,6 +2,11 @@
 #include <Zumo32U4.h>
 #include "startSequence.h"
 
+
+Zumo32U4LineSensors lineSensors;
+Zumo32U4Motors motors;
+
+
 unsigned int lineSensorValues[5];
 
 // skru på sensorer
