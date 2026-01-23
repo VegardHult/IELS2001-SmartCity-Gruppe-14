@@ -1,9 +1,9 @@
+#include <Zumo32U4.h>
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
 #include "battery.h"
 #include "display.h"
-#include "locate.h"
 #include "MQTT.h"
 #include "navigation.h"
 #include "startSequence.h"
@@ -11,17 +11,20 @@
 
 // Setup ZUMO modules
 Zumo32U4Encoders encoders;
+Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
 
 modes mode = PATROL;
 actions action = I;
 
 bool wait = false;
+#include "lineFollowing.h"
 
 void setup() {
-  // put your setup code here, to run once:
-  gyroskopInit();
-  delay(2000);
+    calibrateZumo();
+    Serial.begin(9600);
+    gyroskopInit();
+    delay(2000);
 }
 
 void loop() {
