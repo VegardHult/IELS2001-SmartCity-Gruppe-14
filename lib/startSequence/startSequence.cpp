@@ -3,11 +3,7 @@
 #include "startSequence.h"
 
 
-Zumo32U4LineSensors lineSensors;
-Zumo32U4Motors motors;
-
-
-unsigned int lineSensorValues[5];
+unsigned int lineValues[5];
 
 // skru på sensorer
 void initSensors()
@@ -18,9 +14,9 @@ void initSensors()
 //spinner bilen helt til den finne linja igjen
 void stopOnLine()
 {
-    while (lineSensorValues[2] != 1000)
+    while (lineValues[2] != 1000)
     {
-        lineSensors.readLine(lineSensorValues);
+        lineSensors.readLine(lineValues);
         motors.setSpeeds(-200, 200);
         delay(10);
     }

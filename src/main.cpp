@@ -12,16 +12,15 @@
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
 
+int _lastValue = 0;
+
 void setup() {
+    delay(1000);
+    initSensors();
     calibrateZumo();
-    Serial.begin(9600);
 }
 
 void loop() {
-    followLine();
-    if (paKryss()) {
-        Serial.println("Kryss detected!");
-        delay(1000); // Pause for a second to avoid multiple detections
-    }
+   followLine(100);
     
 }
