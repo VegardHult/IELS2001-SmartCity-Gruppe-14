@@ -107,19 +107,19 @@ void calibrateSensors()
 void followLine()
 {
     int position = lineSensors.readLine(lineSensorValues);
-    error = position - 2000;
+    int error = position - 2000;
 
-    int correction = 0.2*error + 1.5*(error-lastError);
+    int correction = error / 4 + 6 * (error-lastError);
+    lastError = error;
 
 
     int leftSpeed = 200 + correction;
     int rightSpeed = 200 - correction;
 
-    leftSpeed = constrain(leftSpeed,0,200);
-    rightSpeed = constrain(rightSpeed,0,200);
+    int leftSpeed = constrain(leftSpeed,0,200);
+    int rightSpeed = constrain(rightSpeed,0,200);
 
     motors.setSpeeds(leftSpeed, rightSpeed);
-    lastError = error;
 }
 
 bool paKryss()
