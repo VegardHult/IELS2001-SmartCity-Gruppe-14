@@ -14,13 +14,14 @@ Zumo32U4Motors motors;
 
 int _lastValue = 0;
 
-void setup() {
+void setup()
+{
     delay(1000);
     initSensors();
     calibrateZumo();
 }
 
-void loop() {
-   followLine(100);
-    
+void loop()
+{
+    followLine(200, 0.4, 1.5);
 }

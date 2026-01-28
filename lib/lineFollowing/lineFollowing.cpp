@@ -8,8 +8,8 @@ int error;
 int lastError = 0;
 
 //endre disse for å tune styringen
-#define PROPORTIONAL_CONSTANT 0.2
-#define DERIVATIVE_CONSTANT 1.5
+//#define PROPORTIONAL_CONSTANT 0.4
+//#define DERIVATIVE_CONSTANT 1.5
 
 extern int _lastValue;
 
@@ -64,61 +64,22 @@ static void readSensors(){
     error = position - MIDDLE_OF_LINE;
 }
 
-static int directionChange(){
+int directionChange(float prop_const, float der_const){
     //PID kontrolleringsformel
-    int value = PROPORTIONAL_CONSTANT*error + DERIVATIVE_CONSTANT*(error - lastError);
+    int value = prop_const*error + der_const*(error - lastError);
     lastError = error;
     return value;
 }
 
-void followLine(int max_speed){
+void followLine(int max_speed, float prop_const, float der_const){
     readSensors();
-    int speedDifference = directionChange();
+    int speedDifference = directionChange(prop_const, der_const);
 
     int leftSpeed = max_speed + speedDifference;
     int rightSpeed = max_speed - speedDifference;
 
     leftSpeed = constrain(leftSpeed,0,max_speed);
     rightSpeed = constrain(rightSpeed,0,max_speed);
-    motors.setSpeeds(leftSpeed, rightSpeed);
-}
-
-/*
-void calibrateSensors()
-{
-    // Calibrate the line sensors by taking multiple readings
-    for (uint16_t i = 0; i < 120; i++)
-    {
-        if (i > 30 && i <= 90)
-        {
-            motors.setSpeeds(-200, 200);
-        }
-        else
-        {
-            motors.setSpeeds(200, -200);
-        }
-
-        lineSensors.calibrate();
-        delay(10);
-    }
-    motors.setSpeeds(0, 0);
-}
-
-void followLine()
-{
-    int position = lineSensors.readLine(lineSensorValues);
-    int error = position - 2000;
-
-    int correction = error / 4 + 6 * (error-lastError);
-    lastError = error;
-
-
-    int leftSpeed = 200 + correction;
-    int rightSpeed = 200 - correction;
-
-    int leftSpeed = constrain(leftSpeed,0,200);
-    int rightSpeed = constrain(rightSpeed,0,200);
-
     motors.setSpeeds(leftSpeed, rightSpeed);
 }
 
@@ -135,4 +96,3 @@ bool paKryss()
     }
     return activeSensors >= 3;
 }
-*/
