@@ -16,7 +16,7 @@ def naresteBil(rutenett, biler, ulykkespunkt):
 	#Rutenett er en 2d liste hvor man kan og ikke kan kjøre
 	#Biler er en liste med alle bil-objektene
 	#Ulykkespunkt er en liste hvor [0] er x- og [1] er y-koordinat
-	naresteBil = None
+	naresteBil = 0
 	kortesteAvstand = 0
 
 	for bil in biler:
@@ -24,7 +24,7 @@ def naresteBil(rutenett, biler, ulykkespunkt):
 			continue
 		avstand = len(getMoves(rutenett, bil.posistion, ulykkespunkt, bil.orientation))
 		if(avstand < kortesteAvstand):
-			naresteBil = bil
+			naresteBil = bil.id
 			kortesteAvstand = avstand
 
 	return naresteBil
