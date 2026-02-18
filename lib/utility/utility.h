@@ -10,7 +10,7 @@ enum actions {
     T, // Turn 180 degrees
     L, // Turn left
     R,  // Turn right
-    I
+    I // Idle
 };
 
 enum modes {
