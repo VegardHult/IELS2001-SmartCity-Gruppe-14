@@ -2,45 +2,50 @@ from pathfinding.finder.a_star import AStarFinder
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 import numpy as np
+import copy
 import utility
 from utility import Car
+from utility import Matrix
 
-patrolTime = 5 # Seconds per revolution
-relativeRadius = 0.75 # Patrol radius based on smallest grid dimension
+patrolTime = 10 # Seconds per revolution
+radiusConstant = 0.75 # 1 gives circle to outer edge, 0 gives center point
 
-def findPath(grid, start, end):
+def getPath(grid, start, end):
 
-    grid = Grid(matrix=grid)
+    grid = Grid(matrix=grid.matrix)
 
-    start = grid.node(start[0], start[1])
-    end = grid.node(end[0], end[1])
+    start = grid.node(start[0], start[1]*(-1)+grid.height-1)
+    end = grid.node(end[0], end[1]*(-1)+grid.height-1)
 
     finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
     path = finder.find_path(start, end, grid)
-    print(f"path {path}")
 
-    coordinates = [[node.x, node.y] for node in path]
+    coordinates = [[node.x, node.y * (-1) + grid.height-1] for node in path[0]]
+
+    if len(coordinates) == 0:
+        return None
+
     return coordinates
 
-    # Can also be visualized using the library's tools or printed
-    print(grid.grid_str(path=path))
-
 # Get moves for path
-def getMoves(grid, start, end, orientation):
-    path = findPath(grid, start, end)
+def getMoves(grid, path, orientation):
     currentOrientation = orientation
     destinationOrientation = orientation
     moves = []
+
+    start = path[0]
+    end = path[-1]
     
     # If destination is reached, or unreachable
-    if (start == end) or (not path):
-        moves.append(["I"])
-        return moves
+    if (start == end):
+        return ["I"]
+    elif path == None:
+        return ["I"]
 
     # Iterate over path coordinates
     for i, step in enumerate(path):
 
-        # Break if list contains one element
+        # Break if on last path element
         if i == len(path)-1:
             break
         
@@ -76,32 +81,25 @@ def getMoves(grid, start, end, orientation):
     return moves
 
 # Block grid position of other cars
-def blockGrid(grid, cars, currentCar):
+def blockGrid(grid, cars, currentCar = None):
+    blockedGrid = Matrix(grid=grid)
     for car in cars:
-        blockedGrid = utility.safeCopy(grid)
         # Don't block current car
         if car == currentCar:
             continue
-        # Block current car positions
-        blockedGrid[car.path[0][0], car.path[0][1]] = 0
+        # Block other cars positions
+        blockedGrid.set(0, car.position[0], car.position[1])
         
         # Block next position
-        if len(car.path) > 2:
-            # Block next car position
-            blockGrid[car.path[1][0]][car.path[1][1]] = 0
+        if len(car.path) >= 2:
+            nextPos = car.path[1]
+            if utility.onGrid(grid, nextPos[0], nextPos[1]):
+                # Block next position of car
+                blockedGrid.set(0, nextPos[0], nextPos[1])
     return blockedGrid
 
-# Update moves list in all cars
-def updateAllMoves(grid, cars):
-    moves = []
-    blockedGrid = grid
-    for car in cars:
-        blockedGrid = blockGrid(grid, cars, car)
-        car.moves = getMoves(grid, car.position, car.destination, car.orientation)
-    return cars
-
 # Get new position after move
-def getPosition(position, orientation, move):
+def getPositionAfterMove(position, orientation, move):
     newPosition = position
     newOrientation = orientation
 
@@ -129,22 +127,62 @@ def getPosition(position, orientation, move):
     return newPosition, newOrientation
 
 def getPatrol(grid, cars, car, elapsedTime):
-    # Size of grid
-    gridSize = [len(grid[0]),len(grid)]
-
     # Find center of grid
-    center = [gridSize[0]/2,gridSize[1]/2]
+    center = [(grid.width/2)-0.5,(grid.height/2)-0.5]
     # Circle radius based on smallest grid dimension
-    radius = min(gridSize)*0.75
+    xradius = grid.width / 2 * radiusConstant
+    yradius = grid.height / 2 * radiusConstant
 
     # Individual car time with offset
-    carTime = patrolTime / len(cars) * (car.id+1)
+    carTime = patrolTime / len(cars) * (cars.index(car)+1)
+
     # Patrol circle angle
     angle = (2 * np.pi) * ((elapsedTime + carTime) % patrolTime) / patrolTime
-    
+
     # Parametric equations for a circle [1]
-    x = int(center[0] + radius * np.cos(angle))
-    y = int(center[1] + radius * np.sin(angle))
+    x = int(center[0] + xradius * np.cos(angle))
+    y = int(center[1] + yradius * np.sin(angle))
     destination = [x, y]
 
     return destination
+
+def movesToPosition(moves, start, orientation):
+    position = start
+    orientation = orientation
+
+    # Keep start position if Idle
+    for move in moves:
+        if move == "I":
+            return start
+        
+        # Handle turn moves
+        if move == "T":
+            orientation = (orientation + 2) % 4
+        elif move == "R":
+            orientation = (orientation + 1) % 4
+        elif move == "L":
+            orientation = (orientation - 1) % 4
+
+        # Handle straight moves
+        elif move == "S":
+            if orientation == 0:
+                position = [position[0], position[1]+1]
+            elif orientation == 1:
+                position = [position[0]+1, position[1]]
+            elif orientation == 2:
+                position = [position[0], position[1]-1]
+            elif orientation == 3:
+                position = [position[0]-1, position[1]]
+    return position
+
+def getCellsAtDistance(x, y, dist):
+    cells = []
+    # Iterate top and bottom rows
+    for iter_x in range(x - dist, x + dist + 1):
+        cells.append((iter_x, y - dist))
+        cells.append((iter_x, y + dist))
+    # Iterate left and right columns (excluding corners already added)
+    for iter_y in range(y - dist + 1, y + dist):
+        cells.append((x - dist, iter_y))
+        cells.append((x + dist, iter_y))
+    return cells

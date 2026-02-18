@@ -18,7 +18,7 @@ def on_message(client, userdata, msg):
     global messages
     global messageFlags
 
-    messages[msg.topic] = msg.payload.decode()
+    messages[msg.topic] = msg.payload.decode("utf-8")
     messageFlags[msg.topic] = True
 
 def init_subscriber(topics):    
@@ -33,8 +33,18 @@ def init_subscriber(topics):
 
     client.loop_start()
 
+def subscribe_topic(topic):
+    client.subscribe(str(topic))
+
+    messages[topic] = ""
+    messageFlags[topic] = False
+
+
 def read_message(topic):
     messageFlags[topic] = False
+    return messages[topic]
+
+def peek_message(topic):
     return messages[topic]
 
 def check_flag(topic):

@@ -1,8 +1,9 @@
 import random
+import pathfinder
 
-def ulykkegenerator(x, y)
-	ulykkeX = random.randint(0, x)
-	ulykkeY = random.randint(0, y)
+def ulykkegenerator(x, y):
+	ulykkeX = random.randint(0, x-1)
+	ulykkeY = random.randint(0, y-1)
 	ulykkespunkt = [ulykkeX, ulykkeY]
 	return ulykkespunkt
 
@@ -16,13 +17,14 @@ def naresteBil(rutenett, biler, ulykkespunkt):
 	#Rutenett er en 2d liste hvor man kan og ikke kan kjøre
 	#Biler er en liste med alle bil-objektene
 	#Ulykkespunkt er en liste hvor [0] er x- og [1] er y-koordinat
-	naresteBil = 0
+	naresteBil = None
 	kortesteAvstand = 0
 
 	for bil in biler:
 		if(bil.busy):
 			continue
-		avstand = len(getMoves(rutenett, bil.posistion, ulykkespunkt, bil.orientation))
+		sti = pathfinder.getPath(rutenett, bil.position, ulykkespunkt)
+		avstand = len(pathfinder.getMoves(rutenett, sti, bil.orientation))
 		if(avstand < kortesteAvstand):
 			naresteBil = bil.id
 			kortesteAvstand = avstand

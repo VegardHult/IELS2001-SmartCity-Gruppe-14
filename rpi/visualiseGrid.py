@@ -13,7 +13,7 @@ settingsKeywords = [
     ]
 
 # MQTT client settings
-ip = "192.168.137.74" # MQTT broker ip
+ip = "localhost" # MQTT broker ip
 port = "1883" # MQTT broker port
 
 # Size of grid, and default values (overwritten by MQTT message)
@@ -87,6 +87,7 @@ def update_plot(ax, coords=[], hospital=[0,0], charger=[gridSize[0]-1, gridSize[
 def main():
     global gridSize
     global subscribeTopics
+    global settings
 
     # Setup MQTT listener
     MQTT.init_client(ip, port)
@@ -97,11 +98,10 @@ def main():
     # ---------------------------------
     # Get setting definitions from MQTT
     # ---------------------------------
-    print(f"Send settings by MQTT as point lists:\n{"\n".join(subscribeTopics)}")
     while not (None in settings.values()):
         for setting in settings:
-            if MQTT.check_flag(f"visualiser/{setting}"):
-                setting = json.loads(MQTT.read_message(f"visualiser/{setting}"))
+            if MQTT.check_flag(f"settings/{setting}"):
+                settings[setting] = json.loads(MQTT.read_message(f"settings/{setting}"))
             
         # Print program output from PI
         if MQTT.check_flag("program/output"):
