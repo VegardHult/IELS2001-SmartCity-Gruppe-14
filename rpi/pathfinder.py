@@ -7,7 +7,7 @@ import utility
 from utility import Car
 from utility import Matrix
 
-patrolTime = 10 # Seconds per revolution
+patrolTime = 20 # Seconds per revolution
 radiusConstant = 0.75 # 1 gives circle to outer edge, 0 gives center point
 
 def getPath(grid, start, end):
