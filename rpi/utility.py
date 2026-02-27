@@ -1,8 +1,9 @@
 import copy
+import json
 
 # Car class
 class Car:
-    def __init__(self, id, pos, ori = 0, dest = None, path = None, mov = "I", batt = 100, state = "Default", busy = 1):
+    def __init__(self, id, pos, ori = 0, dest = None, path = None, mov = "I", batt = 100, state = "Default", busy = 0, rec = 1):
         self.id = id
         self.position = pos
         self.orientation = ori
@@ -18,7 +19,7 @@ class Car:
         self.battery = batt
         self.state = state
         self.busy = busy
-        self.recieve = 1
+        self.recieve = rec
 
 class Matrix:
     def __init__(self, width=0, height=0, value=0, grid=None):

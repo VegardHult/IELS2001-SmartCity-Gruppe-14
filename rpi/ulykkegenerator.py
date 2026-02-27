@@ -18,7 +18,7 @@ def naresteBil(rutenett, biler, ulykkespunkt):
 	#Biler er en liste med alle bil-objektene
 	#Ulykkespunkt er en liste hvor [0] er x- og [1] er y-koordinat
 	naresteBil = None
-	kortesteAvstand = 0
+	kortesteAvstand = rutenett.width * rutenett.height
 
 	for bil in biler:
 		if(bil.busy):
