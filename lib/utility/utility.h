@@ -4,19 +4,22 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
-extern Zumo32U4Encoders encoders;
-
-enum nextAction {
+enum actions {
+    D, // Drive, line following
     S, // Straight
     T, // Turn 180 degrees
     L, // Turn left
-    R  // Turn right
+    R,  // Turn right
+    I // Idle
 };
 
 enum modes {
     PATROL,
     EMERGENCY
 };
+
+extern Zumo32U4Encoders encoders;
+extern actions action;
 
 extern modes mode;
 

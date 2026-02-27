@@ -1,6 +1,7 @@
 #include <Zumo32U4.h>
 #include <Arduino.h>
 #include <Zumo32U4.h>
+
 #include "battery.h"
 #include "display.h"
 #include "MQTT.h"
@@ -9,8 +10,21 @@
 #include "utility.h"
 #include "lineFollowing.h"
 
+// Setup ZUMO modules
+Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
+
+modes mode = PATROL;
+actions action = I;
+
+bool wait = false;
+#include "lineFollowing.h"
+
+modes mode = PATROL;
+actions action = I;
+
+bool wait = false;
 
 int _lastValue = 0;
 
@@ -19,9 +33,20 @@ void setup()
     delay(1000);
     initSensors();
     calibrateZumo();
+    gyroskopInit();
+    delay(2000);
 }
 
 void loop()
 {
-    followLine(200, 0.4, 1.5);
+  oppdaterGyro();
+  // put your main code here, to run repeatedly:
+  int degreesLeftTurn = 84;
+  int speed = 200;
+
+  if (makeTurn(degreesLeftTurn, speed)) {
+    motors.setSpeeds(0, 0);
+    delay(1000);
+  }
+
 }
