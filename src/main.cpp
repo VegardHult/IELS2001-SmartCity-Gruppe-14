@@ -23,8 +23,10 @@ Zumo32U4Motors motors;
 
 modes mode = PATROL;
 actions action = I;
+actions nextAction = action;
 
 bool busy = false;
+bool busy_last = false;
 
 void setup()
 {
@@ -32,36 +34,24 @@ void setup()
     initSensors();
     calibrateZumo();
     gyroskopInit();
-    delay(2000);
+    delay(2000);  
 
-    // UFERDIG
-
-    // Assign ID from MQTT "promgram/assignId"
-    while (true)
-    {
-      if (recieved_message)
-      {
-        int id = message;
-        // subscribe to car{id}/nextaction
-        // topic = "car{id}/action"
-        break;
-      }
-    }
-    
+    // Get car ID
 }
 
 void loop()
 {
-  // Get MQTT message if ready
+  // Run action
+  busy = navigateGrid(action);
+
+  // When action is finished
   if (!busy)
   {
     busy = true;
-    actions nextMove = read_message;
-  }
-  
-  // Run action
-  if (navigateGrid(nextMove)) {
-    // Send update to server
-  }
+    action = nextAction;
+    nextAction = read_message(); // Write function for recieving MQTT messages
 
+    // Update server by sending {action} to car{id}/action
+
+  }
 }
