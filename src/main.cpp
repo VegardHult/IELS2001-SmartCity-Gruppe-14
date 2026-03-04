@@ -29,7 +29,11 @@ int id;
 
 bool busy = false;
 bool busy_last = false;
+unsigned long elapsedTime = 0; // Millisekunder siden programmets start
 
+// Batteri
+volatile double batteryCharge = FULL_BATTERY; // Batteri
+int batteryPercentage; //Batteri målt i sekunder
 int battery_last;
 
 void setup()
@@ -50,9 +54,15 @@ void setup()
 
 void loop()
 {
+  elapsedTime = millis();
+  //fixes everyting battery-related and displays it on the screen
+  updateBattery();
 
+  // Update server by sending {battery} to car{id}/battery
+
+  // Display battery percentage
    if (battery_last != batteryPercentage) {
-      writeToScreen(String(batteryPercentage), 1);
+      writeToScreen(String(batteryPercentage) + "%", 1);
       battery_last = batteryPercentage;
 
   // Run action
@@ -70,4 +80,6 @@ void loop()
     
     
   }
+
+  
 }
