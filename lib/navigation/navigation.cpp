@@ -110,7 +110,7 @@ bool driveClicks(int cL, int cR, int speed) {
         // Read and reset encoder clicks from encoders
         readClicks = readEncoders();
         // Update battery value from clicks
-        driveBattery(readClicks);
+        driveBattery(abs(readClicks.int1) + abs(readClicks.int2));
 
         // Start motors
         motors.setSpeeds(speed * dirL, speed * dirR);
@@ -120,7 +120,7 @@ bool driveClicks(int cL, int cR, int speed) {
         // Read and reset clicks from encoders
         readClicks = readEncoders();
         // Update battery value from clicks
-        driveBattery(readClicks);
+        driveBattery(abs(readClicks.int1) + abs(readClicks.int2));
         // Count clicks
         countClicks.int1 += readClicks.int1;
         countClicks.int2 += readClicks.int2;
