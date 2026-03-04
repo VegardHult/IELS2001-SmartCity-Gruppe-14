@@ -42,14 +42,14 @@ void setup()
     initSensors();
     calibrateZumo();
     gyroskopInit();
-    delay(2000);  
+    delay(2000);
 
     int id = Get_car_ID();
 
     String subscribeTopic = "car" + String(id) + "/nextaction";
     String updateTopic = "car" + String(id) + "/action";
 
-    writeToScreen(id, 0);
+    writeToScreen(String(id), 0);
 }
 
 void loop()
@@ -58,12 +58,9 @@ void loop()
   //fixes everyting battery-related and displays it on the screen
   updateBattery();
 
-  // Update server by sending {battery} to car{id}/battery
+  writeToScreen("ID: " + String(id) + " " + String(mode), 0);
 
-  // Display battery percentage
-   if (battery_last != batteryPercentage) {
-      writeToScreen(String(batteryPercentage) + "%", 1);
-      battery_last = batteryPercentage;
+  // Update server by sending {battery} to car{id}/battery
 
   // Run action
   busy = navigateGrid(action, mode);
@@ -77,9 +74,5 @@ void loop()
 
     // Update server by sending {action} to car{id}/action
     }
-    
-    
   }
-
-  
 }

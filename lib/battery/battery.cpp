@@ -42,7 +42,7 @@ void displayBatteryPercentage() {
         String batteryString = String(batteryPercentage) + "%";
         
         // Update screen
-        writeToScreen(batteryString, 0);
+        writeToScreen(batteryString, 1);
     }
 }
 
