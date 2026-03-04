@@ -42,7 +42,7 @@ void setup()
 void loop()
 {
   // Run action
-  busy = navigateGrid(action);
+  busy = navigateGrid(action, mode);
 
   // When action is finished
   if (!busy)
