@@ -1,6 +1,7 @@
 #include "navigation.h"
 #include "utility.h"
 #include "locate.h"
+#include "lineFollowing.h"
 
 // Number of encoder clicks from intersection found to intersection
 int clicksToIntersection = 100;
@@ -23,7 +24,7 @@ static int degreesLeftTurn = -84;
 static int degreesRightTurn = 84;
 
 // Navigation master function
-bool navigateGrid (actions nextAction, modes mode) {
+bool navigateGrid (actions action, modes mode) {
 
     int speed;
     int turnSpeed;
@@ -55,31 +56,31 @@ bool navigateGrid (actions nextAction, modes mode) {
     // Drive straight to intersection
     case S:
         // Follow line
-        if (!followLine()) {busy = true;} 
+        if (!paKryss()) {followLine(); busy = true;} 
         // Drive past intersection
         else if (!driveClicks(clicksToIntersection, clicksToIntersection, speed)) {busy = true;}
-        else {busy = false; action = nextAction;}
+        else {busy = false;}
         break;
 
     // Turn 180 degrees
     case T:
         /* code */
         if (!makeTurn(degreesTurnAround, turnSpeed)) {busy = true;}
-        else {busy = false; action = nextAction;}
+        else {busy = false;}
         break;
 
     // Turn left
     case L:
         /* code */
         if (!makeTurn(degreesLeftTurn, turnSpeed)) {busy = true;}
-        else {busy = false; action = nextAction;}
+        else {busy = false;}
         break;
         
     // Turn right
     case R:
         /* code */
         if (!makeTurn(degreesRightTurn, turnSpeed)) {busy = true;}
-        else {busy = false; action = nextAction;}
+        else {busy = false;}
         break;
     
     // Idle
@@ -91,11 +92,6 @@ bool navigateGrid (actions nextAction, modes mode) {
     return busy;
 
     // updateLocation();
-}
-
-// Follow line between intersections
-bool followLine() {
-    return true;
 }
 
 // Drive certain amount of clicks per motor
