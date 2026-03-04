@@ -25,8 +25,12 @@ modes mode = PATROL;
 actions action = I;
 actions nextAction = action;
 
+int id;
+
 bool busy = false;
 bool busy_last = false;
+
+int battery_last;
 
 void setup()
 {
@@ -36,11 +40,21 @@ void setup()
     gyroskopInit();
     delay(2000);  
 
-    // Get car ID
+    int id = Get_car_ID();
+
+    String subscribeTopic = "car" + String(id) + "/nextaction";
+    String updateTopic = "car" + String(id) + "/action";
+
+    writeToScreen(id, 0);
 }
 
 void loop()
 {
+
+   if (battery_last != batteryPercentage) {
+      writeToScreen(String(batteryPercentage), 1);
+      battery_last = batteryPercentage;
+
   // Run action
   busy = navigateGrid(action, mode);
 
@@ -49,9 +63,11 @@ void loop()
   {
     busy = true;
     action = nextAction;
-    nextAction = read_message(); // Write function for recieving MQTT messages
+    nextAction = read_message(subscribeTopic); // Write function for recieving MQTT messages
 
     // Update server by sending {action} to car{id}/action
-
+    }
+    
+    
   }
 }
