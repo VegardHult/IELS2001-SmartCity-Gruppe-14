@@ -7,4 +7,4 @@
 
 void gyroskopInit();
 
-int getVinkel()
+int getVinkel();
