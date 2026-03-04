@@ -18,11 +18,12 @@ ip = "localhost" # MQTT broker ip
 port = 1883 # MQTT broker port
 
 # Default settings
-defaultSettings = {}
-defaultSettings["gridsize"] = [4,4]
-defaultSettings["hospital"] = [0,0]
-defaultSettings["charger"] = [defaultSettings["gridsize"][0]-1, defaultSettings["gridsize"][1]-1]
-
+defaultSettings = {
+    "gridsize": [4, 4],
+    "hospital": [0, 0],
+    "charger": [3, 3],
+    "cars": [[1, 0], [1, 3]]
+}
 # Initiate grid size varable
 gridSize = defaultSettings["gridsize"]
 
@@ -32,6 +33,7 @@ subscribeTopics = [
     "program/run",
     "settings/default",
     "visualize/cars",
+    "visualize/paths",
     "visualize/accidents"
     ]
 
@@ -45,10 +47,10 @@ for setting in settingsKeywords:
 arrowOffset = 0.2
 
 # Arrow color list
-arrowColors = ["c", "m", "y"]
+colors = ["c", "m", "y"]
 
 # Update plot function
-def update_plot(ax, coords=[], hospital=[0,0], charger=[gridSize[0]-1, gridSize[1]-1], accidents=[]):
+def update_plot(ax, cars=[], hospital=[0,0], charger=[gridSize[0]-1, gridSize[1]-1], accidents=[]):
     global gridSize
 
     ax.clear()
@@ -69,15 +71,15 @@ def update_plot(ax, coords=[], hospital=[0,0], charger=[gridSize[0]-1, gridSize[
             ax.plot(accident[0], accident[1], marker="o", ms=10, color="r")
 
     # Draw cars
-    for i, coord in enumerate(coords):
+    for i, car in enumerate(cars):
         # Arrow start position
-        x = coord[0]
-        y = coord[1]
+        x = car[0]
+        y = car[1]
         # Arrow head position
-        xtext = coord[0]
-        ytext = coord[1]
+        xtext = car[0]
+        ytext = car[1]
         # Handle arrow direction
-        match coord[2]:
+        match car[2]:
             case 0:
                 y += arrowOffset
                 ytext -= arrowOffset
@@ -95,8 +97,14 @@ def update_plot(ax, coords=[], hospital=[0,0], charger=[gridSize[0]-1, gridSize[
             "", # No text
             xy=(x, y), 
             xytext=(xtext, ytext), 
-            arrowprops=dict(arrowstyle="->", color=arrowColors[i], lw=3)
+            arrowprops=dict(arrowstyle="->", color=colors[i], lw=3)
         )
+        
+        path_x = [coord[0] for coord in car[3]]
+        path_y = [coord[1] for coord in car[3]]
+
+        ax.plot(path_x, path_y, color=colors[i], lw=1)
+
     # Draw plot
     plt.draw()
     plt.pause(0.01)
@@ -176,6 +184,11 @@ def main():
         if MQTT.check_flag("visualize/cars"):
             # Get car coordinates
             cars = json.loads(MQTT.read_message("visualize/cars"))
+
+        # Update plot with paths
+        if MQTT.check_flag("visualize/paths"):
+            # Get paths
+            cars = json.loads(MQTT.read_message("visualize/paths"))
               
         # Update plot
         update_plot(ax, cars, hospital, charger, accidents)

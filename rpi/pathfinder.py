@@ -140,8 +140,8 @@ def getPatrol(grid, cars, car, elapsedTime):
     angle = (2 * np.pi) * ((elapsedTime + carTime) % patrolTime) / patrolTime
 
     # Parametric equations for a circle [1]
-    x = int(center[0] + xradius * np.cos(angle))
-    y = int(center[1] + yradius * np.sin(angle))
+    x = round(center[0] + xradius * np.cos(angle))
+    y = round(center[1] + yradius * np.sin(angle))
     destination = [x, y]
 
     return destination

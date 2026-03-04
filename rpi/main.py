@@ -116,7 +116,7 @@ unassignedAccidents = []
 accidents = []
 startTime = time.perf_counter()
 accidentTime = 0
-accidentInterval = 10
+accidentInterval = 20
 accidentVariation = 2
 
 # ----------------------
@@ -261,8 +261,11 @@ while True:
     # ---------
     # Visualize
     # ---------
-    coords = [[car.position[0], car.position[1], car.orientation] for car in cars]
-    MQTT.publish_message("visualize/cars", coords)
+    carspos = []
+    for car in cars:
+        carspos.append([car.position[0], car.position[1], car.orientation, car.path])
+
+    MQTT.publish_message("visualize/cars", carspos)
     MQTT.publish_message("visualize/accidents", accidents)
 
     # --------------
