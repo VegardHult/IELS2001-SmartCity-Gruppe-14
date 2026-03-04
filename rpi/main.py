@@ -104,6 +104,19 @@ for i, startPos in enumerate(settings["cars"]):
 
 print(f"[INFO] Subscribed to car topics for {len(cars)} cars")
 
+# Assign IDs to cars
+IDs = []
+for car in cars:
+    IDs.append(car.id)
+
+MQTT.publish_message("program/output", f'Turn on one car at a time, and assign id by sending "id" to "program/assignId \nUnassigned IDs: {IDs}')
+while (True):
+    if MQTT.check_flag("program/assignId"):
+        id = MQTT.read_message("program/assignId")
+        if id == car.id:
+            break
+    time.sleep(waitTime)
+
 # ----------------------
 # Start program loop
 # ----------------------
@@ -117,16 +130,6 @@ while MQTT.peek_message("program/run") != "1":
 
 print("[INFO] Program started")
 MQTT.publish_message("program/output", "Running program")
-
-# Assign IDs to cars
-for car in cars:
-    MQTT.publish_message("program/output", f'Turn on car to assign id: {car.id}, then send "{id}" to "program/assignId".')
-    while (True):
-        if MQTT.check_flag("program/assignId"):
-            id = MQTT.read_message("program/assignId")
-            if id == car.id:
-                break
-        time.sleep(waitTime)
 
 # Accident tracking
 unassignedAccidents = []

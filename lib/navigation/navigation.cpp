@@ -23,7 +23,7 @@ static int degreesLeftTurn = -84;
 static int degreesRightTurn = 84;
 
 // Navigation master function
-void navigateGrid (actions nextAction) {
+bool navigateGrid (actions nextAction) {
 
     int speed;
     int turnSpeed;
@@ -61,8 +61,10 @@ void navigateGrid (actions nextAction) {
     // Drive straight on intersection
     case S:
         /* code */
+        
+        if (!followLine){} 
         // Drive past intersection
-        if (!driveClicks(clicksToIntersection, clicksToIntersection, speed)) {busy = true;}
+        else if (!driveClicks(clicksToIntersection, clicksToIntersection, speed)) {busy = true;}
         else {busy = false; action = nextAction;}
         break;
 
@@ -89,9 +91,11 @@ void navigateGrid (actions nextAction) {
     
     // Idle
     case I:
-        
+        busy = false;
         break;
     }
+
+    return busy;
 
     // updateLocation();
 }

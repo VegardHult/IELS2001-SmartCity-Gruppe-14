@@ -1,4 +1,3 @@
-#include <Zumo32U4.h>
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
@@ -11,22 +10,21 @@
 #include "lineFollowing.h"
 
 // Setup ZUMO modules
+Zumo32U4Buzzer buzzer;
+Zumo32U4OLED display;
 Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
 
-modes mode = PATROL;
-actions action = I;
-
-bool wait = false;
+//Egne biblioteker
+#include "battery.h"
 #include "lineFollowing.h"
+#include "display.h"
 
 modes mode = PATROL;
 actions action = I;
 
-bool wait = false;
-
-int _lastValue = 0;
+bool busy = false;
 
 void setup()
 {
@@ -35,18 +33,35 @@ void setup()
     calibrateZumo();
     gyroskopInit();
     delay(2000);
+
+    // UFERDIG
+
+    // Assign ID from MQTT "promgram/assignId"
+    while (true)
+    {
+      if (recieved_message)
+      {
+        int id = message;
+        // subscribe to car{id}/nextaction
+        // topic = "car{id}/action"
+        break;
+      }
+    }
+    
 }
 
 void loop()
 {
-  oppdaterGyro();
-  // put your main code here, to run repeatedly:
-  int degreesLeftTurn = 84;
-  int speed = 200;
-
-  if (makeTurn(degreesLeftTurn, speed)) {
-    motors.setSpeeds(0, 0);
-    delay(1000);
+  // Get MQTT message if ready
+  if (!busy)
+  {
+    busy = true;
+    actions nextMove = read_message;
+  }
+  
+  // Run action
+  if (navigateGrid(nextMove)) {
+    // Send update to server
   }
 
 }

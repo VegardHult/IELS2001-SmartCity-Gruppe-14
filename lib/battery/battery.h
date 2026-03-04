@@ -1,9 +1,20 @@
-#ifndef BATTERY_H
-#define BATTERY_H
-// Your declarations here
-#include "utility.h"
+#ifndef BATTERY_H_INCLUDED
+#define BATTERY_H_INCLUDED
 
-// Update battery charge based on encoder clicks
-void driveBattery(intPair clicks);
+// Battery variables
+#define fullBattery 100 000
 
-#endif // BATTERY_H
+extern int batteryCharge;
+extern int batteryPercentage;
+
+void driveBattery();
+
+void idleBattery();
+
+void calculatePercentage();
+
+void updateScreen();
+
+void updateBattery();
+
+#endif // BATTERY_H_INCLUDED
