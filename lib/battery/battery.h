@@ -35,7 +35,7 @@ extern volatile double batteryCharge;
 extern int batteryPercentage;
 
 // Subtract battery charge cost of driving
-void driveBattery();
+void driveBattery(int clicks);
 
 // Subtract battery charge cost of idle
 void idleBattery();

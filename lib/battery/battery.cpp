@@ -16,11 +16,11 @@ har bare kommentert de vekk, men de erklæres i headerfilen og initsialiseres i 
 unsigned long lastIdleUpdate = 0;
 
 // Update battery charge when wheel encoders move, interrupts loop()
-void driveBattery() {
+void driveBattery(int clicks = 0) {
     int leftEncoderCount = encoders.getCountsAndResetLeft();
     int rightEncoderCount = encoders.getCountsAndResetRight();
   
-    int encodersCount = abs(leftEncoderCount) + abs(rightEncoderCount);
+    int encodersCount = abs(leftEncoderCount) + abs(rightEncoderCount) + clicks;
     batteryCharge -= encodersCount * DRIVE_COST_ROTATION/900;
 }
 

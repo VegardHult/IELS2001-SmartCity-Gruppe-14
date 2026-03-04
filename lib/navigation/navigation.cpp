@@ -12,7 +12,7 @@ int defaultTurnSpeed = 50;
 int emergencySpeed = 200;
 int emergencyTurnSpeed = emergencySpeed / defaultSpeed * defaultTurnSpeed;
 
-// Global variables used in naigation logic
+// Global variables used in navigation logic
 int startDirection = 0;
 bool actionFinished = false;
 bool busy = false;
