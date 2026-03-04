@@ -41,7 +41,14 @@ settings = {setting: None for setting in settingsKeywords}
 MQTT.init_client(ip, port)
 
 # Subscribe to initial program/settings topics
-for topic in ["program/run", "program/output", "settings/default"]:
+subscribeTopics = [
+    "program/run", 
+    "program/output", 
+    "program/assignId",
+    "settings/default"
+    ]
+
+for topic in subscribeTopics:
     MQTT.subscribe_topic(topic)
 
 for setting in settingsKeywords:
@@ -110,6 +117,16 @@ while MQTT.peek_message("program/run") != "1":
 
 print("[INFO] Program started")
 MQTT.publish_message("program/output", "Running program")
+
+# Assign IDs to cars
+for car in cars:
+    MQTT.publish_message("program/output", f'Turn on car to assign id: {car.id}, then send "{id}" to "program/assignId".')
+    while (True):
+        if MQTT.check_flag("program/assignId"):
+            id = MQTT.read_message("program/assignId")
+            if id == car.id:
+                break
+        time.sleep(waitTime)
 
 # Accident tracking
 unassignedAccidents = []
