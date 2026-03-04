@@ -28,6 +28,12 @@ actions nextAction = action;
 bool busy = false;
 bool busy_last = false;
 
+unsigned long elapsedTime = 0; // Millisekunder siden programmets start
+
+// Batteri
+volatile double batteryCharge = FULL_BATTERY; // Batteri
+int batteryPercentage; //Batteri målt i sekunder
+
 void setup()
 {
     delay(1000);
@@ -41,6 +47,13 @@ void setup()
 
 void loop()
 {
+  elapsedTime = millis();
+  //fixes everyting battery-related and displays it on the screen
+  updateBattery();
+
+  // Update server by sending {battery} to car{id}/battery
+
+
   // Run action
   busy = navigateGrid(action, mode);
 
@@ -54,4 +67,6 @@ void loop()
     // Update server by sending {action} to car{id}/action
 
   }
+
+  
 }
