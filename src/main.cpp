@@ -39,6 +39,10 @@ void setup()
 
 void loop()
 {
+  //Håndterer MQTT
+  mqtt.loop();
+
+  
   oppdaterGyro();
   // put your main code here, to run repeatedly:
   int degreesLeftTurn = 84;
