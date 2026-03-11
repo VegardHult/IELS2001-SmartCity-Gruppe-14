@@ -22,6 +22,8 @@ static int degreesTurnAround = 174;
 static int degreesLeftTurn = -84;
 static int degreesRightTurn = 84;
 
+extern bool recieve;
+
 // Navigation master function
 void navigateGrid (actions nextAction) {
 
@@ -76,6 +78,7 @@ void navigateGrid (actions nextAction) {
     // Turn left
     case L:
         /* code */
+        recieve = true;
         if (!makeTurn(degreesLeftTurn, turnSpeed)) {busy = true;}
         else {busy = false; action = nextAction;}
         break;

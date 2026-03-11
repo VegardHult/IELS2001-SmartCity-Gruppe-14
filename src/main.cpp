@@ -1,4 +1,3 @@
-#include <Zumo32U4.h>
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
@@ -11,22 +10,32 @@
 #include "lineFollowing.h"
 
 // Setup ZUMO modules
+Zumo32U4Buzzer buzzer;
+Zumo32U4OLED display;
 Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
 
-modes mode = PATROL;
-actions action = I;
-
-bool wait = false;
+//Egne biblioteker
+#include "battery.h"
 #include "lineFollowing.h"
+#include "display.h"
 
 modes mode = PATROL;
 actions action = I;
+actions nextAction = action;
 
-bool wait = false;
+int id;
 
-int _lastValue = 0;
+bool busy = false;
+bool busy_last = false;
+bool recieve = true;
+unsigned long elapsedTime = 0; // Millisekunder siden programmets start
+
+// Batteri
+volatile double batteryCharge = FULL_BATTERY; // Batteri
+int batteryPercentage; //Batteri målt i sekunder
+int battery_last;
 
 void setup()
 {
@@ -35,22 +44,37 @@ void setup()
     calibrateZumo();
     gyroskopInit();
     delay(2000);
+
+    int id = Get_car_ID();
+
+    String subscribeTopic = "car" + String(id) + "/nextaction";
+    String updateTopic = "car" + String(id) + "/action";
+
+    writeToScreen(String(id), 0);
 }
 
 void loop()
 {
-  //Håndterer MQTT
-  mqtt.loop();
+  elapsedTime = millis();
+  //fixes everyting battery-related and displays it on the screen
+  updateBattery();
 
-  
-  oppdaterGyro();
-  // put your main code here, to run repeatedly:
-  int degreesLeftTurn = 84;
-  int speed = 200;
+  writeToScreen("ID: " + String(id) + " " + String(mode), 0);
 
-  if (makeTurn(degreesLeftTurn, speed)) {
-    motors.setSpeeds(0, 0);
-    delay(1000);
+  // Update server by sending {battery} to car{id}/battery
+
+  // Run action
+  busy = navigateGrid(action, mode);
+
+  // When action is finished
+  if (!busy)
+  {
+    sendWire(addr, action);
+    busy = true;
+    action = nextAction;
+    nextAction = requestWire(addr); // Write function for recieving MQTT messages
+
+    // Update server by sending {action} to car{id}/action
+    }
   }
-
 }
