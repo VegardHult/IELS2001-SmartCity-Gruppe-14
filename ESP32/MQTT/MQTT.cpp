@@ -17,7 +17,7 @@
 
 
 
-
+char nextAction;
 
 int bilID;
 String hostname = "Bil" + random(0, 1024);
@@ -50,7 +50,6 @@ void onConnectionEstablished(){
 
     String handlingTopic = "car" + bilID + "/nextAction";
     mqtt.subscribe(handlingTopic, [](const String &payload){
-        mqtt.publish("bil" + bilID + "/action", "Bilen er koblet til!");
-        Serial.print("Mottok data");
+       nextAction = payload; 
     });
 }
