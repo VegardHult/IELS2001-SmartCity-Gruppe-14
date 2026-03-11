@@ -3,6 +3,7 @@
 // Your declarations here
 #include <Arduino.h>
 #include <Zumo32U4.h>
+#include <Wire.h>
 
 enum actions {
     D, // Drive, line following
@@ -17,6 +18,8 @@ enum modes {
     PATROL,
     EMERGENCY
 };
+
+String handleWire(int addr, String data);
 
 extern Zumo32U4Encoders encoders;
 extern actions action;
