@@ -14,13 +14,8 @@
 #define WiFi_pass "(75R413b"
 #endif
 
-
-
-
-char nextAction;
-
 int bilID;
-String hostname = "Bil" + random(0, 1024);
+String hostname = "car" + random(0, 1024);
 
 EspMQTTClient mqtt(
     SSID,
@@ -28,8 +23,6 @@ EspMQTTClient mqtt(
     MQTT_IP,
     hostname
 );
-
-
 
 // Alt som skal skje når bilen har koblet til serveren. Funksjonsnavnet kan IKKE endres.
 void onConnectionEstablished(){
@@ -50,6 +43,6 @@ void onConnectionEstablished(){
 
     String handlingTopic = "car" + bilID + "/nextAction";
     mqtt.subscribe(handlingTopic, [](const String &payload){
-       nextAction = payload; 
+        nextAction = payload; 
     });
 }
