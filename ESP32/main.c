@@ -11,7 +11,7 @@ void setup()
 }
 
 // Callback for request from master
-void requestEvent() {
+void requestCallback() {
   String response = nextAction;
   // Convert String to c-string and send
   Wire.write(response.c_str()); 
@@ -19,7 +19,7 @@ void requestEvent() {
 }
 
 // Callback for data recieved from master
-void receiveEvent(int howMany) {
+void receiveCallback(int howMany) {
     String recievedData = "";
   while (Wire.available()) {
     char c = Wire.read();
