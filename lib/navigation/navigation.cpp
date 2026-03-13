@@ -17,7 +17,7 @@ bool actionFinished = false;
 bool busy = false;
 intPair countClicks{};
 
-// 
+// Degrees for turns
 static int degreesTurnAround = 174;
 static int degreesLeftTurn = -84;
 static int degreesRightTurn = 84;
@@ -25,7 +25,7 @@ static int degreesRightTurn = 84;
 extern bool recieve;
 
 // Navigation master function
-void navigateGrid (actions nextAction) {
+bool navigateGrid (actions nextAction, modes mode) {
 
     int speed;
     int turnSpeed;
@@ -33,75 +33,66 @@ void navigateGrid (actions nextAction) {
     // Set speed based on mode
     switch (mode)
     {
-    case PATROL:
-        /* code */
-        speed = defaultSpeed;
-        turnSpeed = defaultTurnSpeed;
-        break;
-    
-    case EMERGENCY:
-        /* code */
-        speed = emergencySpeed;
-        turnSpeed = emergencyTurnSpeed;
-        break;
+        // Default
+        case D:
+            speed = defaultSpeed;
+            turnSpeed = defaultTurnSpeed;
+            break;
+        
+        // Emergency
+        case E:
+            speed = emergencySpeed;
+            turnSpeed = emergencyTurnSpeed;
+            break;
     }    
-
-    
-
-    // Drive to intersection
-    driveClicks(clicksToIntersection, clicksToIntersection, speed);
 
     // Action at intersection
     switch (action)
     {
     // Drive straight to intersection
-    case D:
-        /*code*/
-        if (!followLine()) {busy = true;}
-        else {busy = false; action = nextAction;}
-        break;
-    // Drive straight on intersection
     case S:
-        /* code */
-        // Drive past intersection
-        if (!driveClicks(clicksToIntersection, clicksToIntersection, speed)) {busy = true;}
-        else {busy = false; action = nextAction;}
+        busy = followLine();
+        // Start driving to intersection centre when intersetion found
+        if (!busy) {
+            action = D;
+            // Start driving to intersection center, to keep busy true
+            busy = driveClicks(clicksToIntersection, clicksToIntersection, speed);
+        }
+        break;
+
+    // Drive to intersection centre
+    case D:
+        busy = driveClicks(clicksToIntersection, clicksToIntersection, speed);
         break;
 
     // Turn 180 degrees
     case T:
-        /* code */
-        if (!makeTurn(degreesTurnAround, turnSpeed)) {busy = true;}
-        else {busy = false; action = nextAction;}
+        busy = makeTurn(degreesTurnAround, turnSpeed);
         break;
 
     // Turn left
     case L:
-        /* code */
-        recieve = true;
-        if (!makeTurn(degreesLeftTurn, turnSpeed)) {busy = true;}
-        else {busy = false; action = nextAction;}
+        busy = makeTurn(degreesLeftTurn, turnSpeed);
         break;
         
     // Turn right
     case R:
-        /* code */
-        if (!makeTurn(degreesRightTurn, turnSpeed)) {busy = true;}
-        else {busy = false; action = nextAction;}
+        busy = makeTurn(degreesRightTurn, turnSpeed);
         break;
     
     // Idle
     case I:
-        
+        busy = false;
+        // Sleep?
         break;
     }
-
-    // updateLocation();
+    return busy;
 }
 
 // Follow line between intersections
 bool followLine() {
-    return true;
+    busy = false;
+    return busy;
 }
 
 // Drive certain amount of clicks per motor
@@ -124,7 +115,6 @@ bool driveClicks(int cL, int cR, int speed) {
 
         // Start motors
         motors.setSpeeds(speed * dirL, speed * dirR);
-        // Update busy value
         busy = true;
     } else {
         // Read and reset clicks from encoders
@@ -137,13 +127,12 @@ bool driveClicks(int cL, int cR, int speed) {
         
         // Check if click count is over target click count
         if (countClicks.int1 >= cL && countClicks.int2 >= cR) {
-            // Return true if done driving
+            // Set not busy when done driving
             busy = false;
-            return true;
         }
     }
     // Return false if not done driving
-    return false;
+    return busy;
 }
 
 // Turn certain amount of degrees on the spot
@@ -163,26 +152,28 @@ bool makeTurn(int degrees, int speed) {
 
         // Start motors
         motors.setSpeeds(speed * dirL, speed * dirR);
+
         busy = true;
     } 
-    // Run while turning, return true when done turning
+    // Run while turning, return false when done turning
     else {
         int currentDirection = (getDirection() - startDirection);
         if (currentDirection > 180) {currentDirection -= 360;} else if (currentDirection < -179) {currentDirection += 360;}
         Serial.println(currentDirection);
+        // Set busy to false when reached rotation goal
         if (degrees >= 0) {
+            // For positive angle changes
             if (currentDirection >= degrees) {
                 busy = false;
-                return true;
             }
+        // For negative angle changes
         } else {
             if (currentDirection <= degrees) {
                 busy = false;
-                return true;
             }
         }
         
     }
-    // Return false if not done turning
-    return false;
+    // Return busy
+    return busy;
 }

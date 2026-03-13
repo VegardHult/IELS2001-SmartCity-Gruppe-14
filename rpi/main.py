@@ -3,11 +3,10 @@ import json
 import copy
 import random
 
-from utility import Car, Matrix
-import utility
-import pathfinder
-import ulykkegenerator
-import MQTT
+from utility import *
+from pathfinderModule import *
+from ulykkegenerator import *
+from MQTT import *
 
 # ----------------------
 # MQTT & Program settings
@@ -38,34 +37,34 @@ settings = {setting: None for setting in settingsKeywords}
 # ----------------------
 # Initialize MQTT
 # ----------------------
-MQTT.init_client(ip, port)
+init_client(ip, port)
 
 # Subscribe to initial program/settings topics
 for topic in ["program/run", "program/output", "settings/default"]:
-    MQTT.subscribe_topic(topic)
+    subscribe_topic(topic)
 
 for setting in settingsKeywords:
-    MQTT.subscribe_topic(f"settings/{setting}")
+    subscribe_topic(f"settings/{setting}")
 
 # ----------------------
 # Wait for settings
 # ----------------------
-MQTT.publish_message(
+publish_message(
     "program/output",
     f'Send settings via MQTT:\nsettings/{'\nsettings/'.join(settingsKeywords)} \nOr send "1" to settings/default for default settings.'
 )
 
 while None in settings.values():
     # Default settings
-    if MQTT.check_flag("settings/default") and MQTT.read_message("settings/default") == "1":
+    if check_flag("settings/default") and read_message("settings/default") == "1":
         settings = copy.deepcopy(defaultSettings)
         print("[INFO] Default settings applied")
 
     # Update settings from MQTT messages
     for setting in settings.keys():
         topic = f"settings/{setting}"
-        if MQTT.check_flag(topic):
-            settings[setting] = json.loads(MQTT.read_message(topic))
+        if check_flag(topic):
+            settings[setting] = json.loads(read_message(topic))
             print(f"[INFO] Received {setting}: {settings[setting]}")
 
     time.sleep(waitTime)
@@ -92,24 +91,24 @@ for i, startPos in enumerate(settings["cars"]):
     cars.append(car)
 
     # Subscribe to car topics dynamically
-    MQTT.subscribe_topic(f"car{i}/action")
-    MQTT.subscribe_topic(f"car{i}/battery")
+    subscribe_topic(f"car{i}/action")
+    subscribe_topic(f"car{i}/battery")
 
 print(f"[INFO] Subscribed to car topics for {len(cars)} cars")
 
 # ----------------------
 # Start program loop
 # ----------------------
-MQTT.publish_message("program/output", 'Send "1" to "program/run" to start program.')
+publish_message("program/output", 'Send "1" to "program/run" to start program.')
 
 # Wait for start signal
-while MQTT.peek_message("program/run") != "1":
-    if MQTT.check_flag("program/output"):
-        print(MQTT.read_message("program/output"))
+while peek_message("program/run") != "1":
+    if check_flag("program/output"):
+        print(read_message("program/output"))
     time.sleep(waitTime)
 
 print("[INFO] Program started")
-MQTT.publish_message("program/output", "Running program")
+publish_message("program/output", "Running program")
 
 # Accident tracking
 unassignedAccidents = []
@@ -128,7 +127,7 @@ while True:
     # -------------------
     # Wait next iteration
     # -------------------
-    if MQTT.peek_message("program/run") != "1":
+    if peek_message("program/run") != "1":
         time.sleep(waitTime)
         continue
 
@@ -137,7 +136,7 @@ while True:
     # ------------------
     randomInterval = accidentVariation * (random.random() - 0.5)
     if elapsedTime - accidentTime >= accidentInterval + randomInterval:
-        accident = ulykkegenerator.ulykkegenerator(width, height)
+        accident = ulykkegenerator(width, height)
         if not(accident == hospital or accident == charger):
             unassignedAccidents.append(accident)
             accidents.append(accident)
@@ -152,26 +151,24 @@ while True:
         # Process action messages
         # -----------------------
         actionTopic = f"car{car.id}/action"
-        if MQTT.check_flag(actionTopic):
-            move = MQTT.read_message(actionTopic)
+        if check_flag(actionTopic):
+            move = read_message(actionTopic)
 
             # Validate move
             if car.moves and move != car.moves[0]:
                 print(f"[ERROR] Car {car.id}: received {move}, expected {car.moves[0]}")
 
             # Update car position
-            blockedGrid = pathfinder.blockGrid(grid, cars, car)
-            car.position, car.orientation = pathfinder.getPositionAfterMove(
-                car.position, car.orientation, move
-            )
+            blockedGrid = blockGrid(grid, cars, car)
+            car.position, car.orientation = getPositionAfterMove(car.position, car.orientation, move)
             car.recieve = 1
 
         # ---------------
         # Battery updates
         # ---------------
         batteryTopic = f"car{car.id}/battery"
-        if MQTT.check_flag(batteryTopic):
-            car.battery = int(MQTT.read_message(batteryTopic))
+        if check_flag(batteryTopic):
+            car.battery = int(read_message(batteryTopic))
 
         # ------------------------
         # Battery & charging logic
@@ -212,13 +209,13 @@ while True:
         # Handle patrol
         # -------------
         if not car.busy and car.state == "Default":
-            car.destination = pathfinder.getPatrol(grid, cars, car, elapsedTime)
+            car.destination = getPatrol(grid, cars, car, elapsedTime)
 
     # -------------------------------
     # Assign accidents to nearest car
     # -------------------------------
     for accident in unassignedAccidents:
-        nearest_id = ulykkegenerator.naresteBil(grid, cars, accident)
+        nearest_id = naresteBil(grid, cars, accident)
         if nearest_id is not None:
             cars[nearest_id].destination = accident
             cars[nearest_id].busy = 1
@@ -229,8 +226,8 @@ while True:
     # Compute paths & moves
     # ---------------------
     for car in cars:
-        blockedGrid = pathfinder.blockGrid(grid, cars, car)
-        path = pathfinder.getPath(blockedGrid, car.position, car.destination)
+        blockedGrid = blockGrid(grid, cars, car)
+        path = getPath(blockedGrid, car.position, car.destination)
 
         # If no path, find closest reachable cell
         distance = 1
@@ -254,8 +251,8 @@ while True:
     # -----------------------------
     for car in cars:
         if car.recieve and car.moves:
-            MQTT.publish_message(f"car{car.id}/nextaction", car.moves[0])
-            MQTT.publish_message(f"car{car.id}/state", car.state)
+            publish_message(f"car{car.id}/nextaction", car.moves[0])
+            publish_message(f"car{car.id}/mode", car.state)
             car.recieve = 0
 
     # ---------
@@ -265,13 +262,13 @@ while True:
     for car in cars:
         carspos.append([car.position[0], car.position[1], car.orientation, car.path])
 
-    MQTT.publish_message("visualize/cars", carspos)
-    MQTT.publish_message("visualize/accidents", accidents)
+    publish_message("visualize/cars", carspos)
+    publish_message("visualize/accidents", accidents)
 
     # --------------
     # Program output
     # --------------
-    if MQTT.check_flag("program/output"):
-        print(MQTT.read_message("program/output"))
+    if check_flag("program/output"):
+        print(read_message("program/output"))
 
     time.sleep(waitTime)

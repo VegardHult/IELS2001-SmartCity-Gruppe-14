@@ -3,7 +3,6 @@
 
 #include "battery.h"
 #include "display.h"
-#include "MQTT.h"
 #include "navigation.h"
 #include "startSequence.h"
 #include "utility.h"
@@ -21,11 +20,12 @@ Zumo32U4Motors motors;
 #include "lineFollowing.h"
 #include "display.h"
 
-modes mode = PATROL;
+modes mode = D;
 actions action = I;
 actions nextAction = action;
 
-int id;
+// int id;
+int addr = 100;
 
 bool busy = false;
 bool busy_last = false;
@@ -45,12 +45,10 @@ void setup()
     gyroskopInit();
     delay(2000);
 
-    int id = Get_car_ID();
+    // int id = Get_car_ID();
 
-    String subscribeTopic = "car" + String(id) + "/nextaction";
-    String updateTopic = "car" + String(id) + "/action";
-
-    writeToScreen(String(id), 0);
+    // Write id to screen, not currently functional
+    // writeToScreen(String(id), 0);
 }
 
 void loop()
@@ -59,9 +57,8 @@ void loop()
   //fixes everyting battery-related and displays it on the screen
   updateBattery();
 
-  writeToScreen("ID: " + String(id) + " " + String(mode), 0);
-
-  // Update server by sending {battery} to car{id}/battery
+  // Write id to screen, not currently functional
+  // writeToScreen("ID: " + String(id) + " " + String(mode), 0);
 
   // Run action
   busy = navigateGrid(action, mode);
@@ -69,12 +66,16 @@ void loop()
   // When action is finished
   if (!busy)
   {
-    sendWire(addr, action);
-    busy = true;
+    // Send finished action to ESP-32
+    String actionString = actionToString(action);
+    sendWire(addr, actionString);
+    // Assign next action to action
     action = nextAction;
-    nextAction = requestWire(addr); // Write function for recieving MQTT messages
-
-    // Update server by sending {action} to car{id}/action
-    }
+    // Get next action from ESP-32
+    String wireString = requestWire(addr); // Write function for recieving MQTT messages
+    wireDataStruct wireData = parseWire(wireString);
+    nextAction = wireData.action;
+    mode = wireData.mode;
+    
   }
 }

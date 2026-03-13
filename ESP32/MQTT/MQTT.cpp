@@ -1,6 +1,7 @@
 #include "MQTT.h"
 #include "EspMQTTClient.h"
 #include "PubSubClient.h"
+#include "utility.h"
 
 #ifndef MQTT_IP
 #define MQTT_IP "192.168.137.74"
@@ -14,7 +15,15 @@
 #define WiFi_pass "(75R413b"
 #endif
 
-int bilID;
+extern String nextAction;
+extern String mode;
+extern bool mqttFlag;
+
+extern String wireMessageSend;
+extern String wireActionRecieve;
+extern String wireBatteryRecieve;
+
+extern int bilID;
 String hostname = "car" + random(0, 1024);
 
 EspMQTTClient mqtt(
@@ -42,7 +51,7 @@ void onConnectionEstablished(){
     Serial.print("Fått ID: "); Serial.println(bilID);
 
     String handlingTopic = "car" + bilID + "/nextAction";
-    mqtt.subscribe(handlingTopic, [](const String &payload){
-        nextAction = payload; 
-    });
+    mqtt.subscribe(handlingTopic, [](const String &payload){nextAction = payload.charAt(0); mqttFlag = true;});
+    String handlingTopic = "car" + bilID + "/mode";
+    mqtt.subscribe(handlingTopic, [](const String &payload){mode = payload.charAt(0); mqttFlag = true;})
 }

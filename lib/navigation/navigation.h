@@ -9,7 +9,7 @@
 extern Zumo32U4Motors motors;
 
 // Navigation master function
-void navigateGrid(actions nextAction);
+bool navigateGrid(actions nextAction, modes mode);
 
 // Follow line between intersections
 bool followLine();
