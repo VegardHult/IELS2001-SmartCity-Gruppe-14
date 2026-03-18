@@ -2,27 +2,27 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
-Zumo32U4Buzzer buzzer;
+Zumo32U4Buzzer sirene;
 
 static bool sirenOn = false;
-static const char sirenSound[] = "l8 a f";
+static const char sirenSound[] = "l4 a f";
 
 void startSiren()
 {
   sirenOn = true;
-  buzzer.play(sirenSound);
+  sirene.play(sirenSound);
 }
 
 void updateSiren()
 {
-  if (sirenOn && !buzzer.isPlaying())
+  if (sirenOn && !sirene.isPlaying())
   {
-    buzzer.play(sirenSound);
+    sirene.play(sirenSound);
   }
 }
 
 void stopSiren()
 {
   sirenOn = false;
-  buzzer.stopPlaying();
+  sirene.stopPlaying();
 }
