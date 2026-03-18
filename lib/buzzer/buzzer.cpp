@@ -2,59 +2,27 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
-Zumo32U4Buzzer buzzer;
-
-static const uint16_t MIN_FREQ = 600;
-static const uint16_t MAX_FREQ = 1200;
-static const uint16_t STEP = 10; //økning i frekvens per oppdatering i Hz
-static const uint16_t DURATION = 20; //varighet per tone i ms
-static const uint8_t VOLUME = 15; //maks volum
+Zumo32U4Buzzer sirene;
 
 static bool sirenOn = false;
-static uint16_t currentFreq = MIN_FREQ; 
-static bool increasing = true; //indikerer om frekvensen øker eller minker
+static const char sirenSound[] = "l4 a f";
 
-void startSiren() 
+void startSiren()
 {
-    sirenOn = true; 
-    currentFreq = MIN_FREQ;
-    increasing = true;
+  sirenOn = true;
+  sirene.play(sirenSound);
 }
 
-void sirenUpdate() 
+void updateSiren()
 {
-    if (!sirenOn)
-        return;
-    
-    buzzer.playFrequency(currentFreq, DURATION, VOLUME);
-
-    if (increasing) 
-    {
-        currentFreq += STEP;
-        if (currentFreq >= MAX_FREQ) 
-        {
-            currentFreq = MAX_FREQ;
-            increasing = false; //start å minke frekvensen
-        }
-}
-    else 
-    {
-        currentFreq -= STEP;
-        if (currentFreq <= MIN_FREQ) 
-        {
-            currentFreq = MIN_FREQ;
-            increasing = true; //start å øke frekvensen
-        }
-    }
+  if (sirenOn && !sirene.isPlaying())
+  {
+    sirene.play(sirenSound);
+  }
 }
 
-void stopSiren() 
+void stopSiren()
 {
-    sirenOn = false;
-    buzzer.stopPlaying(); //stopp eventuelle pågående toner
-}
-
-bool isSirenOn() 
-{
-    return sirenOn;
+  sirenOn = false;
+  sirene.stopPlaying();
 }

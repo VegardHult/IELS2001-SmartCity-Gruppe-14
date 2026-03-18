@@ -12,4 +12,6 @@ void clearScreen();
 // Write string to screen
 void writeToScreen(String str, int line);
 
+void updateDisplay(modes currentMode);
+
 #endif // __DISPLAY__
