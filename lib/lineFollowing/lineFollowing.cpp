@@ -7,10 +7,6 @@ unsigned int lineSensorValues[NUM_SENSORS];
 int error;
 int lastError = 0;
 
-//endre disse for å tune styringen
-#define PROPORTIONAL_CONSTANT 0.4
-#define DERIVATIVE_CONSTANT 1.5
-
 int _lastValue;
 
 int locateLine (unsigned int sensor_values[]) {
@@ -64,7 +60,7 @@ static void readSensors(){
     error = position - MIDDLE_OF_LINE;
 }
 
-int directionChange(float prop_const = PROPORTIONAL_CONSTANT, float der_const = DERIVATIVE_CONSTANT){
+int directionChange(float prop_const, float der_const){
     //PID kontrolleringsformel
     int value = prop_const*error + der_const*(error - lastError);
     lastError = error;
@@ -85,7 +81,7 @@ bool paKryss()
     return false;
 }
 
-bool followLine(int max_speed, float prop_const = PROPORTIONAL_CONSTANT, float der_const = DERIVATIVE_CONSTANT){
+bool followLine(int max_speed, float prop_const, float der_const){
     readSensors();
     if (paKryss()) {return true;}
     int speedDifference = directionChange(prop_const, der_const);

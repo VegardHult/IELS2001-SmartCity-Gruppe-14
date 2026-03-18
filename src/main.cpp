@@ -9,6 +9,7 @@
 #include "startSequence.h"
 #include "utility.h"
 #include "locate.h"
+#include "WireMaster.h"
 
 // Setup ZUMO modules
 Zumo32U4Buzzer buzzer;

@@ -15,8 +15,10 @@ int emergencyTurnSpeed = emergencySpeed / defaultSpeed * defaultTurnSpeed;
 // Global variables used in navigation logic
 int startDirection = 0;
 bool actionFinished = false;
-bool busy = false;
 bool followingLine = false;
+extern bool recieve;
+extern bool busy;
+
 intPair countClicks{};
 
 // Degrees for turns
@@ -24,7 +26,7 @@ static int degreesTurnAround = 174;
 static int degreesLeftTurn = -84;
 static int degreesRightTurn = 84;
 
-extern bool recieve;
+
 
 // Navigation master function
 bool navigateGrid (actions action, modes mode) {
@@ -60,7 +62,7 @@ bool navigateGrid (actions action, modes mode) {
     // Drive straight to intersection
     case S:
         if (followingLine) {
-            followingLine = followLine();
+            followingLine = followLine(speed);
         } else {
             busy = driveClicks(clicksToIntersection, clicksToIntersection, speed);
             followingLine = true;
@@ -178,7 +180,6 @@ void testModes() {
     actions actionList[] = {L,R,L,T};
     modes modeList[] = {D, D, E, D};
 
-    bool busy = false;
     int a = 0;
 
     while (true) {

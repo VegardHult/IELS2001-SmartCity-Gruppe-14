@@ -12,9 +12,6 @@ extern Zumo32U4Motors motors;
 // Navigation master function
 bool navigateGrid(actions nextAction, modes mode);
 
-// Follow line between intersections
-bool followLine();
-
 // Drive certain amount of clicks per motor
 bool driveClicks(int cL, int cR, int speed);
 
