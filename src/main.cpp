@@ -1,12 +1,14 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
+//Egne biblioteker
 #include "battery.h"
+#include "lineFollowing.h"
 #include "display.h"
 #include "navigation.h"
 #include "startSequence.h"
 #include "utility.h"
-#include "lineFollowing.h"
+#include "locate.h"
 
 // Setup ZUMO modules
 Zumo32U4Buzzer buzzer;
@@ -14,11 +16,7 @@ Zumo32U4OLED display;
 Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
-
-//Egne biblioteker
-#include "battery.h"
-#include "lineFollowing.h"
-#include "display.h"
+Zumo32U4IMU imu;
 
 modes mode = D;
 actions action = I;
@@ -53,6 +51,7 @@ void setup()
 void loop()
 {
   elapsedTime = millis();
+
   //fixes everyting battery-related and displays it on the screen
   updateBattery();
 

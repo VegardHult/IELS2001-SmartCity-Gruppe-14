@@ -16,6 +16,7 @@ int emergencyTurnSpeed = emergencySpeed / defaultSpeed * defaultTurnSpeed;
 int startDirection = 0;
 bool actionFinished = false;
 bool busy = false;
+bool followingLine = false;
 intPair countClicks{};
 
 // Degrees for turns
@@ -45,6 +46,12 @@ bool navigateGrid (actions action, modes mode) {
             speed = emergencySpeed;
             turnSpeed = emergencyTurnSpeed;
             break;
+
+        // Charging
+        case C:
+            speed = 0;
+            turnSpeed = 0;
+            break;
     }    
 
     // Action at intersection
@@ -52,18 +59,12 @@ bool navigateGrid (actions action, modes mode) {
     {
     // Drive straight to intersection
     case S:
-        busy = followLine();
-        // Start driving to intersection centre when intersetion found
-        if (!busy) {
-            action = D;
-            // Start driving to intersection center, to keep busy true
+        if (followingLine) {
+            followingLine = followLine();
+        } else {
             busy = driveClicks(clicksToIntersection, clicksToIntersection, speed);
+            followingLine = true;
         }
-        break;
-
-    // Drive to intersection centre
-    case D:
-        busy = driveClicks(clicksToIntersection, clicksToIntersection, speed);
         break;
 
     // Turn 180 degrees
@@ -87,12 +88,6 @@ bool navigateGrid (actions action, modes mode) {
         // Sleep?
         break;
     }
-    return busy;
-}
-
-// Follow line between intersections
-bool followLine() {
-    busy = false;
     return busy;
 }
 
@@ -177,4 +172,19 @@ bool makeTurn(int degrees, int speed) {
     }
     // Return busy
     return busy;
+}
+
+void testModes() {
+    actions actionList[] = {L,R,L,T};
+    modes modeList[] = {D, D, E, D};
+
+    bool busy = false;
+    int a = 0;
+
+    while (true) {
+        busy = navigateGrid(actionList[a], modeList[a]);
+        if (!busy) {
+            a += 1;
+        }
+    }
 }

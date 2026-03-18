@@ -8,10 +8,10 @@ int error;
 int lastError = 0;
 
 //endre disse for å tune styringen
-//#define PROPORTIONAL_CONSTANT 0.4
-//#define DERIVATIVE_CONSTANT 1.5
+#define PROPORTIONAL_CONSTANT 0.4
+#define DERIVATIVE_CONSTANT 1.5
 
-extern int _lastValue;
+int _lastValue;
 
 int locateLine (unsigned int sensor_values[]) {
     int _numSensors = 3;
@@ -64,15 +64,30 @@ static void readSensors(){
     error = position - MIDDLE_OF_LINE;
 }
 
-int directionChange(float prop_const, float der_const){
+int directionChange(float prop_const = PROPORTIONAL_CONSTANT, float der_const = DERIVATIVE_CONSTANT){
     //PID kontrolleringsformel
     int value = prop_const*error + der_const*(error - lastError);
     lastError = error;
     return value;
 }
 
-void followLine(int max_speed, float prop_const, float der_const){
+bool paKryss()
+{
+    const unsigned int kryssSensorer[] = {0, 4};
+    const unsigned int SENSOR_THRESHOLD = 700;
+    for (unsigned int i = 0; i < (sizeof(kryssSensorer)/sizeof(kryssSensorer[0])); i++)
+    {
+        if (lineSensorValues[kryssSensorer[i]] > SENSOR_THRESHOLD)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool followLine(int max_speed, float prop_const = PROPORTIONAL_CONSTANT, float der_const = DERIVATIVE_CONSTANT){
     readSensors();
+    if (paKryss()) {return true;}
     int speedDifference = directionChange(prop_const, der_const);
 
     int leftSpeed = max_speed + speedDifference;
@@ -81,18 +96,18 @@ void followLine(int max_speed, float prop_const, float der_const){
     leftSpeed = constrain(leftSpeed,0,max_speed);
     rightSpeed = constrain(rightSpeed,0,max_speed);
     motors.setSpeeds(leftSpeed, rightSpeed);
+    return false;
 }
 
-bool paKryss()
-{
-    const unsigned int SENSOR_THRESHOLD = 700;
-    int activeSensors = 0;
-    for (int i = 0; i < NUM_SENSORS; i++)
-    {
-        if (lineSensorValues[i] > SENSOR_THRESHOLD)
-        {
-            activeSensors++;
+void testLineFollowing(){
+    bool kryss = false;
+    int speed = 200;
+
+    while (true) {
+        kryss = followLine(speed);
+        if (kryss) {
+            motors.setSpeeds(0, 0);
+            delay(1000);
         }
     }
-    return activeSensors >= 3;
 }

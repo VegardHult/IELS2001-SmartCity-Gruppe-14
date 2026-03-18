@@ -10,6 +10,8 @@
 
 #include <Wire.h>
 
+extern Zumo32U4IMU imu;
+
 // This constant represents a turn of 45 degrees.
 const int32_t turnAngle45 = 0x20000000;
 

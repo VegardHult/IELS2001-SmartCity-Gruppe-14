@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
-Zumo32U4IMU imu;
-
 #include "locate.h"
 #include "TurnSensor.h"
 

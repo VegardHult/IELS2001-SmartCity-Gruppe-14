@@ -11,8 +11,10 @@ extern Zumo32U4Motors motors;
 int readSensors(unsigned int *sensor_values, unsigned char readMode, unsigned char white_line);
 
 // Håndterer all linjefølging
-void followLine(int max_speed, float prop_const, float der_const);
+bool followLine(int max_speed, float prop_const, float der_const);
 
 bool paKryss();
+
+void testLineFollowing();
 
 #endif // LINEFOLLOWING_H

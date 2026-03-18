@@ -6,7 +6,6 @@
 #include <Wire.h>
 
 enum actions {
-    D, // Drive, line following
     S, // Straight
     T, // Turn 180 degrees
     L, // Turn left
@@ -15,7 +14,7 @@ enum actions {
 };
 
 enum modes {
-    D, // Default driving speed, patrol
+    D, // Patrol driving speed
     E, // Emergency, siren and higher speed
     C // Charge battery when on charging station
 };
