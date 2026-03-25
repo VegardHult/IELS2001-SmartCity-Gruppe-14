@@ -1,3 +1,5 @@
+#define FULL_BATTERY 100
+
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
@@ -20,12 +22,17 @@ Zumo32U4Motors motors;
 Zumo32U4IMU imu;
 Zumo32U4ButtonA buttonA;
 
-modes mode = D;
+//Egne biblioteker
+#include "battery.h"
+#include "lineFollowing.h"
+#include "display.h"
+
+modes mode = P;
 actions action = I;
 actions nextAction = action;
 
 // int id;
-int addr = 100;
+int addr = 0x45;
 
 bool busy = false;
 bool recieve = true;
@@ -41,9 +48,11 @@ void setup()
   delay(1000);
   initSensors();
   //calibrateZumo();
-  gyroskopInit();
+  //gyroskopInit();
   delay(2000);
   Serial.begin(9600);
+    
+    Wire.begin();
   // int id = Get_car_ID();
 
   // Write id to screen, not currently functional
@@ -61,7 +70,7 @@ void loop()
   /*
 
   //fixes everyting battery-related and displays it on the screen
-  updateBattery();
+  //updateBattery();
 
   // Write id to screen, not currently functional
   // writeToScreen("ID: " + String(id) + " " + String(mode), 0);
