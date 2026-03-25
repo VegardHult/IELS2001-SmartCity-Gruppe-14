@@ -7,9 +7,9 @@
 int clicksToIntersection = 100;
 
 // Speed settings
-int defaultSpeed = 100;
-int defaultTurnSpeed = 50;
-int emergencySpeed = 200;
+int defaultSpeed = 150;
+int defaultTurnSpeed = 200;
+int emergencySpeed = 300;
 int emergencyTurnSpeed = emergencySpeed / defaultSpeed * defaultTurnSpeed;
 
 // Global variables used in navigation logic
@@ -87,6 +87,7 @@ bool navigateGrid (actions action, modes mode) {
     // Idle
     case I:
         busy = false;
+        motors.setSpeeds(0, 0);
         // Sleep?
         break;
     }
@@ -176,16 +177,19 @@ bool makeTurn(int degrees, int speed) {
     return busy;
 }
 
-void testModes() {
-    actions actionList[] = {L,R,L,T};
+void testNavigation() {
+    actions actionList[] = {L, R, L, T, I};
     modes modeList[] = {D, D, E, D};
 
     int a = 0;
 
     while (true) {
         busy = navigateGrid(actionList[a], modeList[a]);
+
         if (!busy) {
             a += 1;
         }
+
+        if (a >= sizeof(actionList)/sizeof(actionList[0])) {break;}
     }
 }

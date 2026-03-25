@@ -14,5 +14,6 @@ void oppdaterGyro() {
 
 
 int getDirection(){
-    return ((((int32_t)turnAngle >> 16) * 360) >> 16) + 180;
+    int direction = ((((int32_t)turnAngle >> 16) * 360) >> 16) + 180;
+    return direction;
 }

@@ -18,6 +18,6 @@ bool driveClicks(int cL, int cR, int speed);
 // Turn certain amount of degrees on the spot
 bool makeTurn(int degrees, int speed);
 
-void testModes();
+void testNavigation();
 
 #endif // NAVIGATION_H

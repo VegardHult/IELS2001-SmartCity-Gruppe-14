@@ -42,7 +42,7 @@ void setup()
     calibrateZumo();
     gyroskopInit();
     delay(2000);
-
+    Serial.begin(9600);
     // int id = Get_car_ID();
 
     // Write id to screen, not currently functional
@@ -52,6 +52,14 @@ void setup()
 void loop()
 {
   elapsedTime = millis();
+
+  Serial.println(getDirection());
+
+  delay(100);
+
+  //testNavigation();
+
+  /*
 
   //fixes everyting battery-related and displays it on the screen
   updateBattery();
@@ -77,4 +85,5 @@ void loop()
     mode = wireData.mode;
     
   }
+  */
 }
