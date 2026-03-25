@@ -32,7 +32,7 @@ String modeToString(modes mode) {
     } else if (mode == C) {
         return "C";
     } else {
-        return "D";
+        return "P";
     }
 }
 
@@ -56,7 +56,7 @@ modes stringToMode(String str) {
     } else if (str == "C") {
         return modes::C;
     } else {
-        return modes::D;
+        return modes::P;
     }
 }
 
