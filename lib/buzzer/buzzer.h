@@ -3,8 +3,8 @@
 
 
 void startSiren();
-void sirenUpdate();
+void updateSiren();
 void stopSiren();
-bool isSirenOn();
+
 
 #endif // BUZZER_H

@@ -1,12 +1,15 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
+//Egne biblioteker
 #include "battery.h"
+#include "lineFollowing.h"
 #include "display.h"
 #include "navigation.h"
 #include "startSequence.h"
 #include "utility.h"
-#include "lineFollowing.h"
+#include "locate.h"
+#include "WireMaster.h"
 
 // Setup ZUMO modules
 Zumo32U4Buzzer buzzer;
@@ -14,11 +17,8 @@ Zumo32U4OLED display;
 Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
-
-//Egne biblioteker
-#include "battery.h"
-#include "lineFollowing.h"
-#include "display.h"
+Zumo32U4IMU imu;
+Zumo32U4ButtonA buttonA;
 
 modes mode = D;
 actions action = I;
@@ -38,21 +38,28 @@ int battery_last;
 
 void setup()
 {
-    delay(1000);
-    initSensors();
-    calibrateZumo();
-    gyroskopInit();
-    delay(2000);
+  delay(1000);
+  initSensors();
+  //calibrateZumo();
+  gyroskopInit();
+  delay(2000);
+  Serial.begin(9600);
+  // int id = Get_car_ID();
 
-    // int id = Get_car_ID();
-
-    // Write id to screen, not currently functional
-    // writeToScreen(String(id), 0);
+  // Write id to screen, not currently functional
+  // writeToScreen(String(id), 0);
 }
+
+int angle;
 
 void loop()
 {
   elapsedTime = millis();
+
+  testNavigation();
+
+  /*
+
   //fixes everyting battery-related and displays it on the screen
   updateBattery();
 
@@ -77,4 +84,5 @@ void loop()
     mode = wireData.mode;
     
   }
+  */
 }

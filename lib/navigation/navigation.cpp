@@ -4,26 +4,29 @@
 #include "lineFollowing.h"
 
 // Number of encoder clicks from intersection found to intersection
-int clicksToIntersection = 100;
+int clicksToIntersection = 600;
 
 // Speed settings
-int defaultSpeed = 100;
-int defaultTurnSpeed = 50;
-int emergencySpeed = 200;
+int defaultSpeed = 200;
+int defaultTurnSpeed = 150;
+int emergencySpeed = 300;
 int emergencyTurnSpeed = emergencySpeed / defaultSpeed * defaultTurnSpeed;
 
 // Global variables used in navigation logic
 int startDirection = 0;
 bool actionFinished = false;
-bool busy = false;
+bool followingLine = false;
+extern bool recieve;
+extern bool busy;
+
 intPair countClicks{};
 
 // Degrees for turns
 static int degreesTurnAround = 174;
-static int degreesLeftTurn = -84;
-static int degreesRightTurn = 84;
+static int degreesLeftTurn = 84;
+static int degreesRightTurn = -84;
 
-extern bool recieve;
+
 
 // Navigation master function
 bool navigateGrid (actions action, modes mode) {
@@ -45,6 +48,12 @@ bool navigateGrid (actions action, modes mode) {
             speed = emergencySpeed;
             turnSpeed = emergencyTurnSpeed;
             break;
+
+        // Charging
+        case C:
+            speed = 0;
+            turnSpeed = 0;
+            break;
     }    
 
     // Action at intersection
@@ -52,18 +61,12 @@ bool navigateGrid (actions action, modes mode) {
     {
     // Drive straight to intersection
     case S:
-        busy = followLine();
-        // Start driving to intersection centre when intersetion found
-        if (!busy) {
-            action = D;
-            // Start driving to intersection center, to keep busy true
+        if (followingLine) {
+            followingLine = false;//followLine(speed);
+        } else {
             busy = driveClicks(clicksToIntersection, clicksToIntersection, speed);
+            followingLine = true;
         }
-        break;
-
-    // Drive to intersection centre
-    case D:
-        busy = driveClicks(clicksToIntersection, clicksToIntersection, speed);
         break;
 
     // Turn 180 degrees
@@ -84,15 +87,10 @@ bool navigateGrid (actions action, modes mode) {
     // Idle
     case I:
         busy = false;
+        motors.setSpeeds(0, 0);
         // Sleep?
         break;
     }
-    return busy;
-}
-
-// Follow line between intersections
-bool followLine() {
-    busy = false;
     return busy;
 }
 
@@ -142,7 +140,7 @@ bool makeTurn(int degrees, int speed) {
     // Only run on start of turn
     if(!busy) {
         // Get facing direction at start of turn
-        startDirection = getDirection();
+        resetGyro();
 
         // Set motor direction
         int dirL;
@@ -158,23 +156,53 @@ bool makeTurn(int degrees, int speed) {
     } 
     // Run while turning, return false when done turning
     else {
-        int currentDirection = (getDirection() - startDirection);
-        if (currentDirection > 180) {currentDirection -= 360;} else if (currentDirection < -179) {currentDirection += 360;}
-        Serial.println(currentDirection);
+        int currentDirection = getDirection();
         // Set busy to false when reached rotation goal
-        if (degrees >= 0) {
-            // For positive angle changes
-            if (currentDirection >= degrees) {
-                busy = false;
-            }
-        // For negative angle changes
-        } else {
-            if (currentDirection <= degrees) {
-                busy = false;
-            }
+        if (abs(currentDirection) >= abs(degrees)) {
+            busy = false;
         }
-        
     }
     // Return busy
     return busy;
+}
+
+actions test_action = R;
+
+void testAction() {
+    if (test_action == R) {
+        busy = makeTurn(-90, 150);
+        if (!busy) {
+            test_action = S;
+        }
+    } else if (test_action == S) {
+        busy = driveClicks(500, 500, 150);
+        if (!busy) {
+            test_action = R;
+        }
+    }
+    
+    if (!busy) {
+    motors.setSpeeds(0,0);
+    delay(1000);
+  }
+}
+
+
+void testNavigation() {
+    actions actionList[] = {L, R, L, T, S};
+    modes modeList[] = {D, D, E, D, E};
+
+    int a = 0;
+
+    while (true) {
+        busy = navigateGrid(actionList[a], modeList[a]);
+
+        if (!busy) {
+            a += 1;
+            motors.setSpeeds(0,0);
+            delay(1000);
+        }
+
+        if (a >= int(sizeof(actionList)/sizeof(actionList[0]))) {break;}
+    }
 }

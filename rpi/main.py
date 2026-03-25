@@ -106,10 +106,10 @@ IDs = []
 for car in cars:
     IDs.append(car.id)
 
-MQTT.publish_message("program/output", f'Turn on one car at a time, and assign id by sending "id" to "program/assignId \nUnassigned IDs: {IDs}')
+publish_message("program/output", f'Turn on one car at a time, and assign id by sending "id" to "program/assignId \nUnassigned IDs: {IDs}')
 while (True):
-    if MQTT.check_flag("program/assignId"):
-        id = MQTT.read_message("program/assignId")
+    if check_flag("program/assignId"):
+        id = read_message("program/assignId")
         if id == car.id:
             break
     time.sleep(waitTime)

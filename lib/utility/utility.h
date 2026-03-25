@@ -6,7 +6,6 @@
 #include <Wire.h>
 
 enum actions {
-    D, // Drive, line following
     S, // Straight
     T, // Turn 180 degrees
     L, // Turn left

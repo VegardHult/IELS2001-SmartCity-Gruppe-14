@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 
-Zumo32U4IMU imu;
-
 #include "locate.h"
 #include "TurnSensor.h"
 
@@ -14,7 +12,15 @@ void oppdaterGyro() {
     turnSensorUpdate();
 }
 
+void resetGyro() {
+    turnSensorReset();
+}
+
 
 int getDirection(){
-    return ((((int32_t)turnAngle >> 16) * 360) >> 16) + 180;
+    turnSensorUpdate();
+    int32_t turnSensorRead = (int32_t)((int64_t)turnAngle * 180 / 0x80000000);
+    if (turnSensorRead > 180) turnSensorRead -= 360;
+    if (turnSensorRead < -180) turnSensorRead += 360;
+    return turnSensorRead;
 }

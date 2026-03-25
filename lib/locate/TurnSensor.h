@@ -8,7 +8,12 @@
 
 #pragma once
 
+#ifndef TURNSENSOR_H
+#define TURNSENSOR_H
+
 #include <Wire.h>
+
+extern Zumo32U4IMU imu;
 
 // This constant represents a turn of 45 degrees.
 const int32_t turnAngle45 = 0x20000000;
@@ -116,3 +121,5 @@ void turnSensorSetup()
   }
   gyroOffset = total / 1024;
 }
+
+#endif // TURNSENSOR_H

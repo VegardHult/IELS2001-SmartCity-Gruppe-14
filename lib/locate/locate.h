@@ -2,11 +2,12 @@
 #define LOCATE_H
 // Your declarations here
 
-#endif // LOCATE_H
-
-
 void gyroskopInit();
 
 void oppdaterGyro();
 
+void resetGyro();
+
 int getDirection();
+
+#endif // LOCATE_H
