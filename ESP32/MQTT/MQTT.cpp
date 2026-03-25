@@ -55,3 +55,7 @@ void onConnectionEstablished(){
     String handlingTopic = "car" + bilID + "/mode";
     mqtt.subscribe(handlingTopic, [](const String &payload){mode = payload.charAt(0); mqttFlag = true;})
 }
+
+void mqttLoop(){
+    mqtt.loop():
+}

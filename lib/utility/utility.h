@@ -15,7 +15,7 @@ enum actions {
 };
 
 enum modes {
-    D, // Default driving speed, patrol
+    P, // Default driving speed, patrol
     E, // Emergency, siren and higher speed
     C // Charge battery when on charging station
 };
