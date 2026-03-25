@@ -8,6 +8,9 @@
 
 #pragma once
 
+#ifndef TURNSENSOR_H
+#define TURNSENSOR_H
+
 #include <Wire.h>
 
 extern Zumo32U4IMU imu;
@@ -118,3 +121,5 @@ void turnSensorSetup()
   }
   gyroOffset = total / 1024;
 }
+
+#endif // TURNSENSOR_H

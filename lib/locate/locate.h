@@ -6,6 +6,8 @@ void gyroskopInit();
 
 void oppdaterGyro();
 
+void resetGyro();
+
 int getDirection();
 
 #endif // LOCATE_H

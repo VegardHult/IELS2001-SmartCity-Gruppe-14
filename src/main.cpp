@@ -18,6 +18,7 @@ Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
 Zumo32U4IMU imu;
+Zumo32U4ButtonA buttonA;
 
 modes mode = D;
 actions action = I;
@@ -37,27 +38,25 @@ int battery_last;
 
 void setup()
 {
-    delay(1000);
-    initSensors();
-    calibrateZumo();
-    gyroskopInit();
-    delay(2000);
-    Serial.begin(9600);
-    // int id = Get_car_ID();
+  delay(1000);
+  initSensors();
+  //calibrateZumo();
+  gyroskopInit();
+  delay(2000);
+  Serial.begin(9600);
+  // int id = Get_car_ID();
 
-    // Write id to screen, not currently functional
-    // writeToScreen(String(id), 0);
+  // Write id to screen, not currently functional
+  // writeToScreen(String(id), 0);
 }
+
+int angle;
 
 void loop()
 {
   elapsedTime = millis();
 
-  Serial.println(getDirection());
-
-  delay(100);
-
-  //testNavigation();
+  testNavigation();
 
   /*
 
