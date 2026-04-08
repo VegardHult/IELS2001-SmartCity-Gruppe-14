@@ -4,7 +4,7 @@
 #include <Zumo32U4.h>
 #include <Wire.h>
 
-String sendWire(int addr, String data) {
+void sendWire(int addr, String data) {
     // Send data to ESP-32
     Wire.beginTransmission(addr);
     Wire.write(data.c_str());

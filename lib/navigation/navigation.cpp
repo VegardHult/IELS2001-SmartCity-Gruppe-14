@@ -38,7 +38,7 @@ bool navigateGrid (actions action, modes mode) {
     switch (mode)
     {
         // Default
-        case D:
+        case P:
             speed = defaultSpeed;
             turnSpeed = defaultTurnSpeed;
             break;
@@ -190,7 +190,7 @@ void testAction() {
 
 void testNavigation() {
     actions actionList[] = {L, R, L, T, S};
-    modes modeList[] = {D, D, E, D, E};
+    modes modeList[] = {P, P, E, P, E};
 
     int a = 0;
 

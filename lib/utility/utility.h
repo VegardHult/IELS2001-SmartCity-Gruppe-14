@@ -40,10 +40,10 @@ struct intPair {
 intPair readEncoders();
 
 // Send wire message to ESP-32
-String sendWire(int addr, String data);
+//void sendWire(int addr, String data);
 
 // Request wire from ESP-32
-String requestWire (int addr);
+//String requestWire (int addr);
 
 // Get string from action
 String actionToString(actions action);

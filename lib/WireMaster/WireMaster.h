@@ -5,7 +5,7 @@
 #include <Zumo32U4.h>
 #include <Wire.h>
 
-String sendWire(int addr, String data);
+void sendWire(int addr, String data);
 
 String requestWire (int addr);
 

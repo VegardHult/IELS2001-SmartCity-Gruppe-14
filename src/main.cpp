@@ -21,6 +21,7 @@ Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
 Zumo32U4IMU imu;
 Zumo32U4ButtonA buttonA;
+Zumo32U4ButtonC buttonC;
 
 //Egne biblioteker
 #include "battery.h"
@@ -45,14 +46,17 @@ int battery_last;
 
 void setup()
 {
+  Serial.begin(9600);
   delay(1000);
   initSensors();
   //calibrateZumo();
   //gyroskopInit();
   delay(2000);
-  Serial.begin(9600);
     
-    Wire.begin();
+  Wire.begin();
+  Serial.println("Setup ferdig");
+  //Forhindrer at I2C bussen låses når modemet enda starter
+  while(!buttonC.getSingleDebouncedPress()){}
   // int id = Get_car_ID();
 
   // Write id to screen, not currently functional
@@ -65,8 +69,21 @@ void loop()
 {
   elapsedTime = millis();
 
-  testNavigation();
+  //testNavigation();
 
+  /*
+    TODO: Må finne en måte for bilen å ikke fryse når den forespør data mens ESPen settes opp. Knapp C er tilgjengelig
+  */
+
+  String data = "";
+  Serial.println("Forspør data");
+  Wire.requestFrom(0x45, 2);
+  Serial.println("Data forespurt");
+  while(Wire.available()){
+    Serial.println("Data tilgjengelig");
+    data += Wire.read();
+  }
+  Serial.println(data);
   /*
 
   //fixes everyting battery-related and displays it on the screen
