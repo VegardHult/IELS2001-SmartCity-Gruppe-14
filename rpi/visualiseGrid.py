@@ -148,7 +148,7 @@ def main():
         # Wait interval
         time.sleep(waitTime)
 
-    print("Recieved all settings.")
+    print("Received all settings.")
 
     gridSize = settings["gridsize"]
     hospital = settings["hospital"]

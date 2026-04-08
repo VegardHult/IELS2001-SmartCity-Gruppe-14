@@ -16,7 +16,7 @@ int emergencyTurnSpeed = emergencySpeed / defaultSpeed * defaultTurnSpeed;
 int startDirection = 0;
 bool actionFinished = false;
 bool followingLine = false;
-extern bool recieve;
+extern bool receive;
 extern bool busy;
 
 intPair countClicks{};

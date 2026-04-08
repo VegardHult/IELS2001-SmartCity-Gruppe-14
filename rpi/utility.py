@@ -19,7 +19,7 @@ class Car:
         self.battery = batt
         self.state = state
         self.busy = busy
-        self.recieve = rec
+        self.receive = rec
 
 class Matrix:
     def __init__(self, width=0, height=0, value=0, grid=None):

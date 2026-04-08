@@ -98,7 +98,7 @@ while (None in settings.values()):
     # Wait interval
     time.sleep(waitTime)
 
-print("Recieved all settings")
+print("Received all settings")
 
 # Initiate grid
 width = settings["gridsize"][0]
@@ -112,7 +112,7 @@ carTopics = []
 cars = []
 for i, startPosition in enumerate(settings["cars"]):
     cars.append(Car(i, startPosition, 0, [0,0]))
-    cars[i].recieve = 1
+    cars[i].receive = 1
     # Subscribe to every car topic
     carTopics.append(f"car{i}/action")
     carTopics.append(f"car{i}/battery")
@@ -164,17 +164,17 @@ while True:
         if MQTT.check_flag(carTopic):
             # Read completed move
             move = MQTT.read_message(carTopic)
-            # print(f"at recieve: car {car.id}: {car.moves}")
+            # print(f"at receive: car {car.id}: {car.moves}")
             # Print error message if car made wrong move
             if move != car.moves[0]:
-                print(f"Error car {car.id}: Recieved {move}, expected {car.moves[0]}")
+                print(f"Error car {car.id}: Received {move}, expected {car.moves[0]}")
             blockedGrid = pathfinder.blockGrid(grid, cars, car)
             if blockedGrid.get(car.position[0], car.position[1]) == 0:
                 print(f"Error car {car.id}: Moved to blocked node")
             # Update car position and orientation after move
             car.position, car.orientation = pathfinder.getPositionAfterMove(car.position, car.orientation, move)
-            # Set car ready to recieve next move
-            car.recieve = 1
+            # Set car ready to receive next move
+            car.receive = 1
 
         # ----------------
         # Battery Handling
@@ -294,8 +294,8 @@ while True:
     # Send MQTT to cars
     # -----------------
     for car in cars:
-        # Check if car is ready to recieve move
-        if car.recieve:
+        # Check if car is ready to receive move
+        if car.receive:
             # print(f"at send: car {car.id}: {car.moves}")
             # blockedGrid = pathfinder.blockGrid(grid, cars, car)
             # utility.printGrid(blockedGrid, car)
@@ -303,6 +303,6 @@ while True:
             MQTT.publish_message(f"car{car.id}/nextaction", car.moves[0])
             # Send car state
             MQTT.publish_message(f"car{car.id}/state", car.state)
-            # Set not ready to recieve
-            car.recieve = 0
+            # Set not ready to receive
+            car.receive = 0
 

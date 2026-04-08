@@ -6,8 +6,8 @@ extern String mode;
 extern bool mqttFlag;
 
 extern String wireMessageSend;
-extern String wireActionRecieve;
-extern String wireBatteryRecieve;
+extern String wireActionReceive;
+extern String wireBatteryReceive;
 
 extern int bilID;
 
@@ -19,22 +19,22 @@ void requestEvent() {
   mqttFlag = false;
 }
 
-// Callback for data recieved from master
+// Callback for data received from master
 void receiveEvent(int howMany) {
-    String recievedData = "";
+    String receivedData = "";
   while (Wire.available()) {
     char c = Wire.read();
-    recievedData += c;
+    receivedData += c;
   }
 
   // Send completed action to server
-  if (recievedData.charAt(0) == 'A') {
-    nextAction = recievedData.charAt(1);
-    mqtt.publish("car" + String(bilID) + "/action", wireActionRecieve.substring(1));
+  if (receivedData.charAt(0) == 'A') {
+    nextAction = receivedData.charAt(1);
+    mqtt.publish("car" + String(bilID) + "/action", wireActionReceive.substring(1));
   }
   // Send battery data to server
-  else if (recievedData.charAt(0) == 'B') {
-    nextAction = recievedData.substring(1);
-    mqtt.publish("car" + String(bilID) + "/battery", wireBatteryRecieve.substring(1));
+  else if (receivedData.charAt(0) == 'B') {
+    nextAction = receivedData.substring(1);
+    mqtt.publish("car" + String(bilID) + "/battery", wireBatteryReceive.substring(1));
   }
 }

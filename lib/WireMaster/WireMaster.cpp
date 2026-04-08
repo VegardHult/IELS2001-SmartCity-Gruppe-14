@@ -14,11 +14,11 @@ String sendWire(int addr, String data) {
 String requestWire (int addr) {
     // Request next action from ESP-32
     Wire.requestFrom(addr, 10); // Request 2 bytes (one character long string)
-    String recievedData = ""; // Clear existing data
+    String receivedData = ""; // Clear existing data
     while (Wire.available()) {
         char c = Wire.read();
         if (c == '\0') break; // Stop reading at the terminator
-        recievedData += c;
+        receivedData += c;
     }
-    return recievedData;
+    return receivedData;
 }

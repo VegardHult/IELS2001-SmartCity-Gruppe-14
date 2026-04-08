@@ -60,11 +60,11 @@ modes stringToMode(String str) {
     }
 }
 
-wireDataStruct parseWire(String recievedData) {
-    actions recievedAction = stringToAction(recievedData.substring(0, 1));
-    modes recievedMode = stringToMode(recievedData.substring(1, 2));
+wireDataStruct parseWire(String receivedData) {
+    actions receivedAction = stringToAction(receivedData.substring(0, 1));
+    modes receivedMode = stringToMode(receivedData.substring(1, 2));
     wireDataStruct data;
-    data.action = recievedAction;
-    data.mode = recievedMode;
+    data.action = receivedAction;
+    data.mode = receivedMode;
     return data;
 }

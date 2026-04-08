@@ -12,8 +12,8 @@ bool mqttFlag = false;
 
 // Format [action, mode]
 String wireMessageSend = "ID";
-String wireActionRecieve = "AI";
-String wireBatteryRecieve = "B100";
+String wireActionReceive = "AI";
+String wireBatteryReceive = "B100";
 
 void setup()
 {

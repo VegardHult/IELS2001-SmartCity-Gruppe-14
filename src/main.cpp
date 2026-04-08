@@ -28,7 +28,7 @@ actions nextAction = action;
 int addr = 100;
 
 bool busy = false;
-bool recieve = true;
+bool receive = true;
 unsigned long elapsedTime = 0; // Millisekunder siden programmets start
 
 // Batteri

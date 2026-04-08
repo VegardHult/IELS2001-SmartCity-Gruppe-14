@@ -20,8 +20,8 @@ extern String mode;
 extern bool mqttFlag;
 
 extern String wireMessageSend;
-extern String wireActionRecieve;
-extern String wireBatteryRecieve;
+extern String wireActionReceive;
+extern String wireBatteryReceive;
 
 extern int bilID;
 String hostname = "car" + random(0, 1024);

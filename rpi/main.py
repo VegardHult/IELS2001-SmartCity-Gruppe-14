@@ -92,7 +92,7 @@ charger = settings["charger"]
 cars = []
 for i, startPos in enumerate(settings["cars"]):
     car = Car(i, startPos, 0, [0, 0])
-    car.recieve = 1
+    car.receive = 1
     cars.append(car)
 
     # Subscribe to car topics dynamically
@@ -179,7 +179,7 @@ while True:
             # Update car position
             blockedGrid = blockGrid(grid, cars, car)
             car.position, car.orientation = getPositionAfterMove(car.position, car.orientation, move)
-            car.recieve = 1
+            car.receive = 1
 
         # ---------------
         # Battery updates
@@ -268,10 +268,10 @@ while True:
     # Publish moves & state to cars
     # -----------------------------
     for car in cars:
-        if car.recieve and car.moves:
+        if car.receive and car.moves:
             publish_message(f"car{car.id}/nextaction", car.moves[0])
             publish_message(f"car{car.id}/mode", car.state)
-            car.recieve = 0
+            car.receive = 0
 
     # ---------
     # Visualize

@@ -59,7 +59,7 @@ actions stringToAction(String str);
 modes stringToMode(String str);
 
 // Parse data from wire
-wireDataStruct parseWire(String recievedData);
+wireDataStruct parseWire(String receivedData);
 
 #endif // UTILITY_H
 
