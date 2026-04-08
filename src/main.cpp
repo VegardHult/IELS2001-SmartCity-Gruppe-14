@@ -44,10 +44,13 @@ volatile double batteryCharge = FULL_BATTERY; // Batteri
 int batteryPercentage; //Batteri målt i sekunder
 int battery_last;
 
+int i;
 void setup()
 {
   Serial.begin(9600);
-  delay(1000);
+  delay(4000);
+  i = 0;
+  Serial.println("Starter setup");
   initSensors();
   //calibrateZumo();
   //gyroskopInit();
@@ -67,13 +70,17 @@ int angle;
 
 void loop()
 {
-  elapsedTime = millis();
+  Serial.println(i);
+  delay(100);
+  i+=1;
+
+  //elapsedTime = millis();
 
   //testNavigation();
 
   /*
     TODO: Må finne en måte for bilen å ikke fryse når den forespør data mens ESPen settes opp. Knapp C er tilgjengelig
-  */
+  
 
   String data = "";
   Serial.println("Forspør data");
@@ -84,7 +91,7 @@ void loop()
     data += Wire.read();
   }
   Serial.println(data);
-  /*
+  
 
   //fixes everyting battery-related and displays it on the screen
   //updateBattery();
